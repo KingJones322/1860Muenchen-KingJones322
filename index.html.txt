@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>1860 München — Der Löwe lebt</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --blue: #003366;
+      --gold: #c8a84b;
+      --white: #f4f0e8;
+      --dark: #0a0e1a;
+      --muted: #8a8070;
+      --card-bg: #0f1525;
+      --border: rgba(200, 168, 75, 0.2);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--dark); color: var(--white); font-family: 'Lora', serif; overflow-x: hidden; }
+    body::after {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: 0.5;
+    }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 60px;
+      background: linear-gradient(to bottom, rgba(10,14,26,0.98), transparent);
+      border-bottom: 1px solid rgba(200,168,75,0.1);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+    .nav-lion {
+      width: 42px; height: 42px; background: var(--gold);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Bebas Neue', sans-serif; font-size: 1rem; color: var(--dark);
+    }
+    .nav-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.15em; color: var(--white); }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a {
+      font-family: 'DM Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      justify-content: flex-end; padding: 0 60px 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 80% 20%, rgba(0,51,102,0.6) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 70% at 10% 80%, rgba(200,168,75,0.08) 0%, transparent 50%),
+        linear-gradient(160deg, #0a0e1a 0%, #071020 50%, #0a0e1a 100%);
+    }
+    .hero-number {
+      position: absolute; right: -20px; top: 50%; transform: translateY(-50%);
+      font-family: 'Bebas Neue', sans-serif; font-size: clamp(18rem, 32vw, 38rem);
+      color: rgba(0,51,102,0.22); line-height: 1;
+      user-select: none; pointer-events: none; letter-spacing: -0.05em;
+    }
+    .hero-content { position: relative; z-index: 2; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: rgba(200,168,75,0.1); border: 1px solid var(--border);
+      padding: 8px 20px; margin-bottom: 32px;
+      font-family: 'DM Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold);
+      opacity: 0; animation: fadeUp 1s ease 0.2s forwards;
+    }
+    .hero-badge::before { content: '●'; font-size: 0.5rem; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5rem, 12vw, 11rem);
+      line-height: 0.85; letter-spacing: 0.02em; margin-bottom: 24px;
+      opacity: 0; animation: fadeUp 1s ease 0.4s forwards;
+    }
+    .hero-title span { color: var(--gold); }
+    .hero-sub {
+      font-size: 0.9rem; line-height: 1.8; color: var(--muted);
+      max-width: 500px; margin-bottom: 48px; font-style: italic;
+      opacity: 0; animation: fadeUp 1s ease 0.6s forwards;
+    }
+    .hero-buttons { display: flex; gap: 16px; opacity: 0; animation: fadeUp 1s ease 0.8s forwards; }
+    .btn {
+      font-family: 'DM Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      padding: 14px 32px; text-decoration: none; transition: all 0.3s; display: inline-block;
+    }
+    .btn-primary { background: var(--gold); color: var(--dark); border: 1px solid var(--gold); }
+    .btn-primary:hover { background: transparent; color: var(--gold); }
+    .btn-ghost { border: 1px solid rgba(255,255,255,0.2); color: var(--white); }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+    .ticker { background: var(--gold); padding: 10px 0; overflow: hidden; }
+    .ticker-inner { display: flex; gap: 60px; animation: ticker 30s linear infinite; white-space: nowrap; }
+    .ticker-item { font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--dark); flex-shrink:0; }
+    @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+    section { padding: 100px 60px; }
+    .section-header { margin-bottom: 60px; }
+    .section-tag {
+      font-family: 'DM Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold);
+      margin-bottom: 16px; display: flex; align-items: center; gap: 12px;
+    }
+    .section-tag::before { content: ''; width: 30px; height: 1px; background: var(--gold); }
+    .section-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(2.5rem,5vw,4rem); letter-spacing:0.05em; line-height:1; }
+    .results-section { background: var(--card-bg); }
+    .dfb-links { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 40px; }
+    .dfb-card {
+      flex: 1; min-width: 220px;
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      padding: 32px; text-decoration: none; transition: all 0.3s;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .dfb-card:hover { background: rgba(200,168,75,0.08); border-color: var(--gold); }
+    .dfb-card-icon { font-size: 2rem; }
+    .dfb-card-title {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem;
+      letter-spacing: 0.05em; color: var(--white);
+    }
+    .dfb-card-desc { font-size: 0.75rem; color: var(--muted); line-height: 1.6; font-style: italic; }
+    .dfb-card-arrow {
+      font-family: 'DM Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase;
+      margin-top: auto;
+    }
+    .facts-section { background: var(--blue); }
+    .facts-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:2px; }
+    .fact-card { background:rgba(0,0,0,0.2); padding:48px 32px; text-align:center; border:1px solid rgba(255,255,255,0.05); transition:background 0.3s; }
+    .fact-card:hover { background:rgba(0,0,0,0.4); }
+    .fact-num { font-family:'Bebas Neue',sans-serif; font-size:3.5rem; color:var(--gold); line-height:1; margin-bottom:8px; }
+    .fact-label { font-family:'DM Mono',monospace; font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:rgba(255,255,255,0.6); }
+    .history-section { background: var(--dark); }
+    .timeline { position:relative; padding-left:40px; }
+    .timeline::before { content:''; position:absolute; left:0; top:0; bottom:0; width:1px; background:linear-gradient(to bottom,var(--gold),transparent); }
+    .timeline-item { position:relative; margin-bottom:48px; opacity:0; transform:translateX(-20px); transition:all 0.6s ease; }
+    .timeline-item.visible { opacity:1; transform:translateX(0); }
+    .timeline-dot { position:absolute; left:-46px; top:6px; width:12px; height:12px; background:var(--gold); border-radius:50%; box-shadow:0 0 16px rgba(200,168,75,0.5); }
+    .timeline-year { font-family:'Bebas Neue',sans-serif; font-size:2rem; color:var(--gold); letter-spacing:0.1em; line-height:1; margin-bottom:8px; }
+    .timeline-event { font-size:1rem; font-weight:600; margin-bottom:6px; }
+    .timeline-desc { font-size:0.85rem; line-height:1.8; color:var(--muted); font-style:italic; }
+    .about-section { background: var(--card-bg); }
+    .about-grid { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:start; }
+    .about-text p { font-size:0.95rem; line-height:1.9; color:rgba(244,240,232,0.8); margin-bottom:20px; }
+    .about-highlight { border-left:3px solid var(--gold); padding:20px 24px; margin:32px 0; background:rgba(200,168,75,0.05); font-style:italic; font-size:1.1rem; line-height:1.7; color:var(--white); }
+    .colors-display { display:flex; gap:12px; margin-top:32px; }
+    .color-swatch { flex:1; height:80px; display:flex; align-items:flex-end; padding:10px 14px; font-family:'DM Mono',monospace; font-size:0.6rem; }
+    .swatch-blue { background:var(--blue); }
+    .swatch-white { background:var(--white); color:var(--dark); }
+    .swatch-gold { background:var(--gold); color:var(--dark); }
+    .info-row { background:rgba(255,255,255,0.03); border:1px solid var(--border); padding:20px 24px; margin-bottom:1px; }
+    .info-label { font-family:'DM Mono',monospace; font-size:0.55rem; letter-spacing:0.2em; color:var(--muted); text-transform:uppercase; margin-bottom:6px; }
+    .info-val { font-size:0.9rem; }
+    footer { background:#050810; padding:60px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:40px; border-top:1px solid var(--border); }
+    .footer-desc { font-size:0.8rem; line-height:1.8; color:var(--muted); font-style:italic; margin-top:12px; }
+    .footer-heading { font-family:'DM Mono',monospace; font-size:0.6rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--gold); margin-bottom:20px; }
+    .footer-links { list-style:none; }
+    .footer-links li { margin-bottom:10px; }
+    .footer-links a { font-size:0.8rem; color:var(--muted); text-decoration:none; transition:color 0.3s; }
+    .footer-links a:hover { color:var(--white); }
+    .footer-note { font-family:'DM Mono',monospace; font-size:0.55rem; color:var(--muted); line-height:1.8; }
+    .footer-bottom { background:#030508; padding:20px 60px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,0.04); }
+    .footer-bottom span { font-family:'DM Mono',monospace; font-size:0.55rem; letter-spacing:0.15em; color:var(--muted); }
+    .reveal { opacity:0; transform:translateY(30px); transition:all 0.7s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+    @media (max-width:900px) {
+      nav { padding:16px 24px; }
+      .nav-links { display:none; }
+      section { padding:70px 24px; }
+      .hero { padding:0 24px 60px; }
+      .facts-grid { grid-template-columns:repeat(2,1fr); }
+      .about-grid { grid-template-columns:1fr; }
+      footer { grid-template-columns:1fr; padding:40px 24px; }
+      .footer-bottom { padding:16px 24px; flex-direction:column; gap:8px; }
+      .dfb-links { flex-direction:column; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="#" class="nav-brand">
+      <div class="nav-lion">1860</div>
+      <span class="nav-title">TSV 1860 München</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#ergebnisse">Ergebnisse</a></li>
+      <li><a href="#historie">Historie</a></li>
+      <li><a href="#fakten">Fakten</a></li>
+      <li><a href="#verein">Verein</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-number">1860</div>
+    <div class="hero-content">
+      <div class="hero-badge">Gegründet 1860 · München · 3. Liga</div>
+      <h1 class="hero-title">Der<br><span>Löwe</span><br>lebt.</h1>
+      <p class="hero-sub">TSV München von 1860 e.V. — einer der traditionsreichsten Fußballvereine Deutschlands. Blau-Weiß. Immer. Überall.</p>
+      <div class="hero-buttons">
+        <a href="#ergebnisse" class="btn btn-primary">Aktuelle Ergebnisse</a>
+        <a href="#historie" class="btn btn-ghost">Vereinshistorie</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="ticker">
+    <div class="ticker-inner">
+      <span class="ticker-item">⚽ TSV 1860 München</span>
+      <span class="ticker-item">🦁 Sechzger forever</span>
+      <span class="ticker-item">⚽ 3. Liga</span>
+      <span class="ticker-item">🏟 Grünwalder Stadion</span>
+      <span class="ticker-item">⚽ Blau-Weiß ist unser Leben</span>
+      <span class="ticker-item">🦁 Gegründet 17. Mai 1860</span>
+      <span class="ticker-item">⚽ TSV 1860 München</span>
+      <span class="ticker-item">🦁 Sechzger forever</span>
+      <span class="ticker-item">⚽ 3. Liga</span>
+      <span class="ticker-item">🏟 Grünwalder Stadion</span>
+      <span class="ticker-item">⚽ Blau-Weiß ist unser Leben</span>
+      <span class="ticker-item">🦁 Gegründet 17. Mai 1860</span>
+    </div>
+  </div>
+
+  <!-- ERGEBNISSE -->
+  <section class="results-section" id="ergebnisse">
+    <div class="section-header reveal">
+      <div class="section-tag">Aktuelle Ergebnisse</div>
+      <h2 class="section-title">Ergebnisse & Spielplan</h2>
+    </div>
+    <p style="font-size:0.95rem; color:var(--muted); line-height:1.9; font-style:italic; max-width:600px;">
+      Aktuelle Spielergebnisse, den Spielplan und die Tabelle der 3. Liga findest du direkt auf den offiziellen Seiten.
+    </p>
+    <div class="dfb-links reveal">
+      <a href="https://www.dfb.de/3-liga/staffel/spieltag/" target="_blank" class="dfb-card">
+        <div class="dfb-card-icon">⚽</div>
+        <div class="dfb-card-title">Aktuelle Ergebnisse</div>
+        <div class="dfb-card-desc">Alle Spielergebnisse des aktuellen Spieltags der 3. Liga</div>
+        <div class="dfb-card-arrow">Zu dfb.de →</div>
+      </a>
+      <a href="https://www.dfb.de/3-liga/staffel/tabelle/" target="_blank" class="dfb-card">
+        <div class="dfb-card-icon">📊</div>
+        <div class="dfb-card-title">Tabelle</div>
+        <div class="dfb-card-desc">Die aktuelle Tabelle der 3. Liga mit allen Vereinen</div>
+        <div class="dfb-card-arrow">Zu dfb.de →</div>
+      </a>
+      <a href="https://www.dfb.de/3-liga/staffel/spieltag/" target="_blank" class="dfb-card">
+        <div class="dfb-card-icon">📅</div>
+        <div class="dfb-card-title">Spielplan</div>
+        <div class="dfb-card-desc">Alle kommenden Spiele und Termine der Saison</div>
+        <div class="dfb-card-arrow">Zu dfb.de →</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- FAKTEN -->
+  <section class="facts-section" id="fakten">
+    <div class="facts-grid reveal">
+      <div class="fact-card"><div class="fact-num">1860</div><div class="fact-label">Gründungsjahr</div></div>
+      <div class="fact-card"><div class="fact-num">1</div><div class="fact-label">Deutscher Meister (1966)</div></div>
+      <div class="fact-card"><div class="fact-num">6</div><div class="fact-label">DFB-Pokal Finalist</div></div>
+      <div class="fact-card"><div class="fact-num">164</div><div class="fact-label">Jahre Geschichte</div></div>
+    </div>
+  </section>
+
+  <!-- HISTORIE -->
+  <section class="history-section" id="historie">
+    <div class="section-header reveal">
+      <div class="section-tag">Vereinsgeschichte</div>
+      <h2 class="section-title">164 Jahre Geschichte</h2>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">1860</div>
+        <div class="timeline-event">Vereinsgründung</div>
+        <p class="timeline-desc">Am 17. Mai 1860 wird der Turn-Verein München von 1860 gegründet — zunächst als reiner Turnverein. Die Vereinsfarben Blau und Weiß orientieren sich an den bayerischen Landesfarben.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">1899</div>
+        <div class="timeline-event">Fußballabteilung gegründet</div>
+        <p class="timeline-desc">Die Fußballabteilung des TSV 1860 München wird ins Leben gerufen. Der Verein entwickelt sich schnell zu einem der führenden Fußballklubs in Bayern.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">1942</div>
+        <div class="timeline-event">Erster Meistertitel</div>
+        <p class="timeline-desc">1860 München gewinnt die deutsche Fußballmeisterschaft 1942 — ein historischer Meilenstein in der frühen Vereinsgeschichte.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">1966</div>
+        <div class="timeline-event">Deutscher Meister 🏆</div>
+        <p class="timeline-desc">Die goldene Ära: TSV 1860 München wird Deutscher Fußballmeister — bis heute der größte sportliche Erfolg des Vereins. Unter Trainer Max Merkel spielt die Mannschaft modernen, attraktiven Fußball.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">2000</div>
+        <div class="timeline-event">Bundesliga-Hochphase</div>
+        <p class="timeline-desc">Um die Jahrtausendwende erlebt 1860 eine starke Phase in der Bundesliga. Die Sechzger spielen europäischen Fußball und begeistern tausende Fans im Olympiastadion.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">2017</div>
+        <div class="timeline-event">Abstieg in die 3. Liga</div>
+        <p class="timeline-desc">Nach finanziellen Turbulenzen und sportlichen Rückschlägen steigt 1860 in die 3. Liga ab. Eine schwere Zeit beginnt — doch die Fans stehen weiterhin treu hinter ihrem Verein.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">Heute</div>
+        <div class="timeline-event">Kampf um den Aufstieg</div>
+        <p class="timeline-desc">TSV 1860 München kämpft in der 3. Liga um den Wiederaufstieg. Im Grünwalder Stadion — der Heimat der Löwen — brennt die Stimmung wie eh und je.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- VEREIN -->
+  <section class="about-section" id="verein">
+    <div class="about-grid reveal">
+      <div class="about-text">
+        <div class="section-tag">Der Verein</div>
+        <h2 class="section-title" style="margin-bottom:32px">Mehr als<br>ein Klub</h2>
+        <p>Der TSV München von 1860 e.V., kurz „1860 München" oder „die Sechzger", ist einer der ältesten und traditionsreichsten Sportvereine Deutschlands. Gegründet am 17. Mai 1860, blickt der Verein auf eine bewegte Geschichte zurück.</p>
+        <p>Als einer der wenigen Vereine mit echter Münchner Arbeiterklasse-Tradition steht 1860 für leidenschaftlichen, ehrlichen Fußball. Die Rivalität zum benachbarten FC Bayern München macht die Sechzger zu einem Symbol für das „andere München".</p>
+        <div class="about-highlight">„Wer einmal Sechzger ist, bleibt Sechzger sein."</div>
+        <p>Heute spielen die Löwen in der 3. Liga und kämpfen um die Rückkehr in den Profifußball. Die Fanbase gilt als eine der leidenschaftlichsten und treuesten in ganz Deutschland.</p>
+        <div class="colors-display">
+          <div class="color-swatch swatch-blue">Blau</div>
+          <div class="color-swatch swatch-white">Weiß</div>
+          <div class="color-swatch swatch-gold">Gold</div>
+        </div>
+      </div>
+      <div style="margin-top:60px">
+        <div class="section-tag">Vereinsdaten</div>
+        <div style="margin-top:24px">
+          <div class="info-row"><div class="info-label">Vollständiger Name</div><div class="info-val">Turn-Verein München von 1860 e.V.</div></div>
+          <div class="info-row"><div class="info-label">Gründungsdatum</div><div class="info-val">17. Mai 1860</div></div>
+          <div class="info-row"><div class="info-label">Vereinsfarben</div><div class="info-val">Blau und Weiß</div></div>
+          <div class="info-row"><div class="info-label">Spitzname</div><div class="info-val">Die Löwen / Die Sechzger</div></div>
+          <div class="info-row"><div class="info-label">Heimstadion</div><div class="info-val">Städtisches Stadion an der Grünwalder Str.</div></div>
+          <div class="info-row"><div class="info-label">Aktuelle Liga</div><div class="info-val">3. Liga (DFB)</div></div>
+          <div class="info-row"><div class="info-label">Größter Erfolg</div><div class="info-val">Deutscher Meister 1966</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:0.15em">TSV 1860 München</div>
+      <p class="footer-desc">Ein inoffizielles Fan-Informationsportal. Nicht verbunden mit dem TSV 1860 München e.V.</p>
+    </div>
+    <div>
+      <div class="footer-heading">Navigation</div>
+      <ul class="footer-links">
+        <li><a href="#ergebnisse">Ergebnisse</a></li>
+        <li><a href="#historie">Historie</a></li>
+        <li><a href="#fakten">Fakten</a></li>
+        <li><a href="#verein">Über den Verein</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-heading">Rechtlicher Hinweis</div>
+      <p class="footer-note">Dies ist eine inoffizielle Fan-Website ohne Verbindung zum TSV 1860 München e.V. Historische Informationen basieren auf öffentlich bekannten Fakten.</p>
+    </div>
+  </footer>
+  <div class="footer-bottom">
+    <span>© 2025 — Inoffizielle Fan-Website · Kein offizielles Vereinsangebot</span>
+    <span>tsv1860.de · dfb.de</span>
+  </div>
+
+  <script>
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach((e,i) => {
+        if (e.isIntersecting) { setTimeout(()=>e.target.classList.add('visible'),i*100); obs.unobserve(e.target); }
+      });
+    }, {threshold:0.1});
+    document.querySelectorAll('.reveal,.timeline-item').forEach(el=>obs.observe(el));
+  </script>
+</body>
+</html>
