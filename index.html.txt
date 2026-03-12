@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>1860 München — Der Löwe lebt</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --blue: #003366;
+      --blue-mid: #004d99;
+      --blue-light: #0066cc;
+      --gold: #c8a84b;
+      --white: #f4f0e8;
+      --off: #e8e2d4;
+      --dark: #0a0e1a;
+      --muted: #8a8070;
+      --card-bg: #0f1525;
+      --border: rgba(200, 168, 75, 0.2);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--dark);
+      color: var(--white);
+      font-family: 'Lora', serif;
+      overflow-x: hidden;
+    }
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: 0.5;
+    }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 60px;
+      background: linear-gradient(to bottom, rgba(10,14,26,0.98), transparent);
+      border-bottom: 1px solid rgba(200,168,75,0.1);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+    .nav-lion {
+      width: 42px; height: 42px;
+      background: var(--gold);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Bebas Neue', sans-serif; font-size: 1rem; color: var(--dark);
+    }
+    .nav-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.15em; color: var(--white); }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a {
+      font-family: 'DM Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      justify-content: flex-end; padding: 0 60px 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 80% 20%, rgba(0,51,102,0.6) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 70% at 10% 80%, rgba(200,168,75,0.08) 0%, transparent 50%),
+        linear-gradient(160deg, #0a0e1a 0%, #071020 50%, #0a0e1a 100%);
+    }
+    .hero-number {
+      position: absolute; right: -20px; top: 50%; transform: translateY(-50%);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(18rem, 32vw, 38rem);
+      color: rgba(0,51,102,0.22); line-height: 1;
+      user-select: none; pointer-events: none; letter-spacing: -0.05em;
+    }
+    .hero-content { position: relative; z-index: 2; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: rgba(200,168,75,0.1); border: 1px solid var(--border);
+      padding: 8px 20px; margin-bottom: 32px;
+      font-family: 'DM Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold);
+      opacity: 0; animation: fadeUp 1s ease 0.2s forwards;
+    }
+    .hero-badge::before { content: '●'; font-size: 0.5rem; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5rem, 12vw, 11rem);
+      line-height: 0.85; letter-spacing: 0.02em; margin-bottom: 24px;
+      opacity: 0; animation: fadeUp 1s ease 0.4s forwards;
+    }
+    .hero-title span { color: var(--gold); }
+    .hero-sub {
+      font-size: 0.9rem; line-height: 1.8; color: var(--muted);
+      max-width: 500px; margin-bottom: 48px; font-style: italic;
+      opacity: 0; animation: fadeUp 1s ease 0.6s forwards;
+    }
+    .hero-buttons { display: flex; gap: 16px; opacity: 0; animation: fadeUp 1s ease 0.8s forwards; }
+    .btn {
+      font-family: 'DM Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      padding: 14px 32px; text-decoration: none; transition: all 0.3s; display: inline-block;
+    }
+    .btn-primary { background: var(--gold); color: var(--dark); border: 1px solid var(--gold); }
+    .btn-primary:hover { background: transparent; color: var(--gold); }
+    .btn-ghost { border: 1px solid rgba(255,255,255,0.2); color: var(--white); }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+    .ticker { background: var(--gold); padding: 10px 0; overflow: hidden; }
+    .ticker-inner { display: flex; gap: 60px; animation: ticker 30s linear infinite; white-space: nowrap; }
+    .ticker-item { font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--dark); flex-shrink:0; }
+    @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+    section { padding: 100px 60px; }
+    .section-header { margin-bottom: 60px; }
+    .section-tag {
+      font-family: 'DM Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold);
+      margin-bottom: 16px; display: flex; align-items: center; gap: 12px;
+    }
+    .section-tag::before { content: ''; width: 30px; height: 1px; background: var(--gold); }
+    .section-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(2.5rem,5vw,4rem); letter-spacing:0.05em; line-height:1; }
+    .results-section { background: var(--card-bg); }
+    .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+    .result-card {
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      padding: 24px; transition: all 0.3s; position: relative; overflow: hidden;
+    }
+    .result-card::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 3px; height: 100%; background: var(--gold); opacity: 0; transition: opacity 0.3s;
+    }
+    .result-card:hover { background: rgba(255,255,255,0.05); }
+    .result-card:hover::before { opacity: 1; }
+    .result-date { font-family:'DM Mono',monospace; font-size:0.6rem; letter-spacing:0.2em; color:var(--muted); text-transform:uppercase; margin-bottom:12px; }
+    .result-teams { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+    .result-team { font-family:'Bebas Neue',sans-serif; font-size:1.05rem; letter-spacing:0.05em; flex:1; }
+    .result-team.home { text-align:left; }
+    .result-team.away { text-align:right; }
+    .result-score {
+      font-family:'Bebas Neue',sans-serif; font-size:2rem; color:var(--gold);
+      background:rgba(200,168,75,0.1); padding:4px 16px;
+      border:1px solid var(--border); white-space:nowrap;
+    }
+    .result-league { font-family:'DM Mono',monospace; font-size:0.55rem; letter-spacing:0.15em; color:var(--muted); text-transform:uppercase; }
+    .result-win { border-color:rgba(0,200,100,0.3); }
+    .result-win::before { background:#00c864 !important; opacity:1 !important; }
+    .result-loss { border-color:rgba(200,50,50,0.3); }
+    .result-loss::before { background:#c83232 !important; opacity:1 !important; }
+    .result-draw::before { background:var(--gold) !important; opacity:1 !important; }
+    .loading { text-align:center; padding:60px; font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.2em; color:var(--muted); }
+    .error-msg { text-align:center; padding:40px; font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--muted); border:1px solid var(--border); background:rgba(255,255,255,0.02); line-height:2; }
+    .tabs { display:flex; gap:0; margin-bottom:40px; border-bottom:1px solid var(--border); }
+    .tab-btn {
+      font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase;
+      padding:14px 28px; background:none; border:none; color:var(--muted); cursor:pointer;
+      transition:all 0.3s; border-bottom:2px solid transparent; margin-bottom:-1px;
+    }
+    .tab-btn.active { color:var(--gold); border-bottom-color:var(--gold); }
+    .tab-btn:hover { color:var(--white); }
+    .tab-content { display:none; }
+    .tab-content.active { display:block; }
+    .facts-section { background: var(--blue); }
+    .facts-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:2px; }
+    .fact-card { background:rgba(0,0,0,0.2); padding:48px 32px; text-align:center; border:1px solid rgba(255,255,255,0.05); transition:background 0.3s; }
+    .fact-card:hover { background:rgba(0,0,0,0.4); }
+    .fact-num { font-family:'Bebas Neue',sans-serif; font-size:3.5rem; color:var(--gold); line-height:1; margin-bottom:8px; }
+    .fact-label { font-family:'DM Mono',monospace; font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:rgba(255,255,255,0.6); }
+    .history-section { background: var(--dark); }
+    .timeline { position:relative; padding-left:40px; }
+    .timeline::before { content:''; position:absolute; left:0; top:0; bottom:0; width:1px; background:linear-gradient(to bottom,var(--gold),transparent); }
+    .timeline-item { position:relative; margin-bottom:48px; opacity:0; transform:translateX(-20px); transition:all 0.6s ease; }
+    .timeline-item.visible { opacity:1; transform:translateX(0); }
+    .timeline-dot { position:absolute; left:-46px; top:6px; width:12px; height:12px; background:var(--gold); border-radius:50%; box-shadow:0 0 16px rgba(200,168,75,0.5); }
+    .timeline-year { font-family:'Bebas Neue',sans-serif; font-size:2rem; color:var(--gold); letter-spacing:0.1em; line-height:1; margin-bottom:8px; }
+    .timeline-event { font-size:1rem; font-weight:600; margin-bottom:6px; }
+    .timeline-desc { font-size:0.85rem; line-height:1.8; color:var(--muted); font-style:italic; }
+    .about-section { background: var(--card-bg); }
+    .about-grid { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:start; }
+    .about-text p { font-size:0.95rem; line-height:1.9; color:rgba(244,240,232,0.8); margin-bottom:20px; }
+    .about-highlight { border-left:3px solid var(--gold); padding:20px 24px; margin:32px 0; background:rgba(200,168,75,0.05); font-style:italic; font-size:1.1rem; line-height:1.7; color:var(--white); }
+    .colors-display { display:flex; gap:12px; margin-top:32px; }
+    .color-swatch { flex:1; height:80px; display:flex; align-items:flex-end; padding:10px 14px; font-family:'DM Mono',monospace; font-size:0.6rem; letter-spacing:0.1em; }
+    .swatch-blue { background:var(--blue); }
+    .swatch-white { background:var(--white); color:var(--dark); }
+    .swatch-gold { background:var(--gold); color:var(--dark); }
+    .info-row { background:rgba(255,255,255,0.03); border:1px solid var(--border); padding:20px 24px; margin-bottom:1px; }
+    .info-label { font-family:'DM Mono',monospace; font-size:0.55rem; letter-spacing:0.2em; color:var(--muted); text-transform:uppercase; margin-bottom:6px; }
+    .info-val { font-size:0.9rem; }
+    footer { background:#050810; padding:60px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:40px; border-top:1px solid var(--border); }
+    .footer-desc { font-size:0.8rem; line-height:1.8; color:var(--muted); font-style:italic; margin-top:12px; }
+    .footer-heading { font-family:'DM Mono',monospace; font-size:0.6rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--gold); margin-bottom:20px; }
+    .footer-links { list-style:none; }
+    .footer-links li { margin-bottom:10px; }
+    .footer-links a { font-size:0.8rem; color:var(--muted); text-decoration:none; transition:color 0.3s; }
+    .footer-links a:hover { color:var(--white); }
+    .footer-note { font-family:'DM Mono',monospace; font-size:0.55rem; color:var(--muted); line-height:1.8; }
+    .footer-bottom { background:#030508; padding:20px 60px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,0.04); }
+    .footer-bottom span { font-family:'DM Mono',monospace; font-size:0.55rem; letter-spacing:0.15em; color:var(--muted); }
+    .reveal { opacity:0; transform:translateY(30px); transition:all 0.7s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+    @media (max-width:900px) {
+      nav { padding:16px 24px; }
+      .nav-links { display:none; }
+      section { padding:70px 24px; }
+      .hero { padding:0 24px 60px; }
+      .facts-grid { grid-template-columns:repeat(2,1fr); }
+      .about-grid { grid-template-columns:1fr; }
+      footer { grid-template-columns:1fr; padding:40px 24px; }
+      .footer-bottom { padding:16px 24px; flex-direction:column; gap:8px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="#" class="nav-brand">
+      <div class="nav-lion">1860</div>
+      <span class="nav-title">TSV 1860 München</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#ergebnisse">Ergebnisse</a></li>
+      <li><a href="#historie">Historie</a></li>
+      <li><a href="#fakten">Fakten</a></li>
+      <li><a href="#verein">Verein</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-number">1860</div>
+    <div class="hero-content">
+      <div class="hero-badge">Gegründet 1860 · München · 3. Liga</div>
+      <h1 class="hero-title">Der<br><span>Löwe</span><br>lebt.</h1>
+      <p class="hero-sub">TSV München von 1860 e.V. — einer der traditionsreichsten Fußballvereine Deutschlands. Blau-Weiß. Immer. Überall.</p>
+      <div class="hero-buttons">
+        <a href="#ergebnisse" class="btn btn-primary">Aktuelle Ergebnisse</a>
+        <a href="#historie" class="btn btn-ghost">Vereinshistorie</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="ticker">
+    <div class="ticker-inner">
+      <span class="ticker-item">⚽ TSV 1860 München</span>
+      <span class="ticker-item">🦁 Sechzger forever</span>
+      <span class="ticker-item">⚽ 3. Liga</span>
+      <span class="ticker-item">🏟 Grünwalder Stadion</span>
+      <span class="ticker-item">⚽ Blau-Weiß ist unser Leben</span>
+      <span class="ticker-item">🦁 Gegründet 17. Mai 1860</span>
+      <span class="ticker-item">⚽ TSV 1860 München</span>
+      <span class="ticker-item">🦁 Sechzger forever</span>
+      <span class="ticker-item">⚽ 3. Liga</span>
+      <span class="ticker-item">🏟 Grünwalder Stadion</span>
+      <span class="ticker-item">⚽ Blau-Weiß ist unser Leben</span>
+      <span class="ticker-item">🦁 Gegründet 17. Mai 1860</span>
+    </div>
+  </div>
+
+  <section class="results-section" id="ergebnisse">
+    <div class="section-header reveal">
+      <div class="section-tag">Live Daten · Automatisch aktualisiert</div>
+      <h2 class="section-title">Ergebnisse & Spielplan</h2>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('letzte', this)">Letzte Spiele</button>
+      <button class="tab-btn" onclick="showTab('naechste', this)">Nächste Spiele</button>
+      <button class="tab-btn" onclick="showTab('tabelle', this)">Tabelle</button>
+    </div>
+    <div id="tab-letzte" class="tab-content active">
+      <div id="results-container"><div class="loading">Lade Ergebnisse</div></div>
+    </div>
+    <div id="tab-naechste" class="tab-content">
+      <div id="upcoming-container"><div class="loading">Lade Spielplan</div></div>
+    </div>
+    <div id="tab-tabelle" class="tab-content">
+      <div id="table-container"><div class="loading">Lade Tabelle</div></div>
+    </div>
+  </section>
+
+  <section class="facts-section" id="fakten">
+    <div class="facts-grid reveal">
+      <div class="fact-card"><div class="fact-num">1860</div><div class="fact-label">Gründungsjahr</div></div>
+      <div class="fact-card"><div class="fact-num">1</div><div class="fact-label">Deutscher Meister (1966)</div></div>
+      <div class="fact-card"><div class="fact-num">6</div><div class="fact-label">DFB-Pokal Finalist</div></div>
+      <div class="fact-card"><div class="fact-num">164</div><div class="fact-label">Jahre Geschichte</div></div>
+    </div>
+  </section>
+
+  <section class="history-section" id="historie">
+    <div class="section-header reveal">
+      <div class="section-tag">Vereinsgeschichte</div>
+      <h2 class="section-title">164 Jahre Geschichte</h2>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">1860</div>
+        <div class="timeline-event">Vereinsgründung</div>
+        <p class="timeline-desc">Am 17. Mai 1860 wird der Turn-Verein München von 1860 gegründet — zunächst als reiner Turnverein. Die Vereinsfarben Blau und Weiß orientieren sich an den bayerischen Landesfarben.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">1899</div>
+        <div class="timeline-event">Fußballabteilung gegründet</div>
+        <p class="timeline-desc">Die Fußballabteilung des TSV 1860 München wird ins Leben gerufen. Der Verein entwickelt sich schnell zu einem der führenden Fußballklubs in Bayern.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">1942</div>
+        <div class="timeline-event">Erster Meistertitel</div>
+        <p class="timeline-desc">1860 München gewinnt die deutsche Fußballmeisterschaft 1942 — ein historischer Meilenstein in der frühen Vereinsgeschichte.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">1966</div>
+        <div class="timeline-event">Deutscher Meister 🏆</div>
+        <p class="timeline-desc">Die goldene Ära: TSV 1860 München wird Deutscher Fußballmeister — bis heute der größte sportliche Erfolg des Vereins. Unter Trainer Max Merkel spielt die Mannschaft modernen, attraktiven Fußball.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">2000</div>
+        <div class="timeline-event">Bundesliga-Hochphase</div>
+        <p class="timeline-desc">Um die Jahrtausendwende erlebt 1860 eine starke Phase in der Bundesliga. Die Sechzger spielen europäischen Fußball und begeistern tausende Fans im Olympiastadion.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">2017</div>
+        <div class="timeline-event">Abstieg in die 3. Liga</div>
+        <p class="timeline-desc">Nach finanziellen Turbulenzen und sportlichen Rückschlägen steigt 1860 in die 3. Liga ab. Eine schwere Zeit beginnt — doch die Fans stehen weiterhin treu hinter ihrem Verein.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">Heute</div>
+        <div class="timeline-event">Kampf um den Aufstieg</div>
+        <p class="timeline-desc">TSV 1860 München kämpft in der 3. Liga um den Wiederaufstieg. Im Grünwalder Stadion — der Heimat der Löwen — brennt die Stimmung wie eh und je.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-section" id="verein">
+    <div class="about-grid reveal">
+      <div class="about-text">
+        <div class="section-tag">Der Verein</div>
+        <h2 class="section-title" style="margin-bottom:32px">Mehr als<br>ein Klub</h2>
+        <p>Der TSV München von 1860 e.V., kurz „1860 München" oder „die Sechzger", ist einer der ältesten und traditionsreichsten Sportvereine Deutschlands. Gegründet am 17. Mai 1860, blickt der Verein auf eine bewegte Geschichte zurück.</p>
+        <p>Als einer der wenigen Vereine mit echter Münchner Arbeiterklasse-Tradition steht 1860 für leidenschaftlichen, ehrlichen Fußball. Die Rivalität zum benachbarten FC Bayern München macht die Sechzger zu einem Symbol für das „andere München".</p>
+        <div class="about-highlight">„Wer einmal Sechzger ist, bleibt Sechzger sein."</div>
+        <p>Heute spielen die Löwen in der 3. Liga und kämpfen um die Rückkehr in den Profifußball. Die Fanbase gilt als eine der leidenschaftlichsten und treuesten in ganz Deutschland.</p>
+        <div class="colors-display">
+          <div class="color-swatch swatch-blue">Blau</div>
+          <div class="color-swatch swatch-white">Weiß</div>
+          <div class="color-swatch swatch-gold">Gold</div>
+        </div>
+      </div>
+      <div style="margin-top:60px">
+        <div class="section-tag">Vereinsdaten</div>
+        <div style="margin-top:24px">
+          <div class="info-row"><div class="info-label">Vollständiger Name</div><div class="info-val">Turn-Verein München von 1860 e.V.</div></div>
+          <div class="info-row"><div class="info-label">Gründungsdatum</div><div class="info-val">17. Mai 1860</div></div>
+          <div class="info-row"><div class="info-label">Vereinsfarben</div><div class="info-val">Blau und Weiß</div></div>
+          <div class="info-row"><div class="info-label">Spitzname</div><div class="info-val">Die Löwen / Die Sechzger</div></div>
+          <div class="info-row"><div class="info-label">Heimstadion</div><div class="info-val">Städtisches Stadion an der Grünwalder Str.</div></div>
+          <div class="info-row"><div class="info-label">Aktuelle Liga</div><div class="info-val">3. Liga (DFB)</div></div>
+          <div class="info-row"><div class="info-label">Größter Erfolg</div><div class="info-val">Deutscher Meister 1966</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:0.15em">TSV 1860 München</div>
+      <p class="footer-desc">Ein inoffizielles Fan-Informationsportal. Nicht verbunden mit dem TSV 1860 München e.V.</p>
+    </div>
+    <div>
+      <div class="footer-heading">Navigation</div>
+      <ul class="footer-links">
+        <li><a href="#ergebnisse">Ergebnisse</a></li>
+        <li><a href="#historie">Historie</a></li>
+        <li><a href="#fakten">Fakten</a></li>
+        <li><a href="#verein">Über den Verein</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-heading">Rechtlicher Hinweis</div>
+      <p class="footer-note">Dies ist eine inoffizielle Fan-Website ohne Verbindung zum TSV 1860 München e.V. Spielergebnisse werden automatisch über die öffentliche OpenLigaDB API geladen (Lizenz: CC BY). Historische Infos basieren auf öffentlich bekannten Fakten.</p>
+    </div>
+  </footer>
+  <div class="footer-bottom">
+    <span>© 2025 — Inoffizielle Fan-Website · Kein offizielles Vereinsangebot</span>
+    <span>Daten: OpenLigaDB.de (CC BY)</span>
+  </div>
+
+  <script>
+    function showTab(name, btn) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + name).classList.add('active');
+      btn.classList.add('active');
+    }
+    function formatDate(str) {
+      if (!str) return '–';
+      return new Date(str).toLocaleDateString('de-DE', {weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'});
+    }
+    function formatTime(str) {
+      if (!str) return '';
+      return new Date(str).toLocaleTimeString('de-DE', {hour:'2-digit',minute:'2-digit'}) + ' Uhr';
+    }
+    function getResult(match, id1860) {
+      const r = match.MatchResults?.find(x => x.ResultTypeID === 2) || match.MatchResults?.[match.MatchResults.length-1];
+      if (!r) return 'upcoming';
+      const home = match.Team1.TeamId === id1860;
+      const g = home ? r.PointsTeam1 : r.PointsTeam2;
+      const o = home ? r.PointsTeam2 : r.PointsTeam1;
+      return g > o ? 'win' : g < o ? 'loss' : 'draw';
+    }
+    const SEASON_YEAR = new Date().getMonth() >= 6 ? new Date().getFullYear() : new Date().getFullYear() - 1;
+    async function fetchMatches() {
+      try {
+        const res = await fetch(`https://api.openligadb.de/getmatchdata/bl3/${SEASON_YEAR}`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        const games = data.filter(m =>
+          [m.Team1.TeamName, m.Team2.TeamName, m.Team1.ShortName, m.Team2.ShortName]
+            .some(n => n && (n.includes('1860') || n.toLowerCase().includes('sechzig')))
+        );
+        if (!games.length) { showFallback(); return; }
+        const g0 = games[0];
+        const id1860 = ([g0.Team1.TeamName, g0.Team1.ShortName].some(n => n?.includes('1860')))
+          ? g0.Team1.TeamId : g0.Team2.TeamId;
+        const played = games.filter(m => m.MatchIsFinished).slice(-6).reverse();
+        const upcoming = games.filter(m => !m.MatchIsFinished).slice(0, 6);
+        const rc = document.getElementById('results-container');
+        if (!played.length) { rc.innerHTML = '<div class="error-msg">Noch keine Spiele absolviert.</div>'; }
+        else rc.innerHTML = `<div class="results-grid">${played.map(m => {
+          const r = m.MatchResults?.find(x => x.ResultTypeID===2) || m.MatchResults?.[m.MatchResults.length-1];
+          const score = r ? `${r.PointsTeam1} : ${r.PointsTeam2}` : '– : –';
+          const res = getResult(m, id1860);
+          const cls = res==='win'?'result-win':res==='loss'?'result-loss':'result-draw';
+          return `<div class="result-card ${cls}">
+            <div class="result-date">${formatDate(m.MatchDateTimeUTC)} · ${formatTime(m.MatchDateTimeUTC)}</div>
+            <div class="result-teams">
+              <div class="result-team home">${m.Team1.ShortName||m.Team1.TeamName}</div>
+              <div class="result-score">${score}</div>
+              <div class="result-team away">${m.Team2.ShortName||m.Team2.TeamName}</div>
+            </div>
+            <div class="result-league">3. Liga · Spieltag ${m.Group?.GroupOrderID||''}</div>
+          </div>`;
+        }).join('')}</div>`;
+        const uc = document.getElementById('upcoming-container');
+        if (!upcoming.length) { uc.innerHTML = '<div class="error-msg">Keine weiteren Spiele geplant.</div>'; }
+        else uc.innerHTML = `<div class="results-grid">${upcoming.map(m => `
+          <div class="result-card" style="border-color:rgba(0,102,204,0.3);background:rgba(0,51,102,0.15)">
+            <div class="result-date">Spieltag ${m.Group?.GroupOrderID||''}</div>
+            <div class="result-teams">
+              <div class="result-team home">${m.Team1.ShortName||m.Team1.TeamName}</div>
+              <div class="result-score" style="font-size:1rem;padding:4px 12px">vs</div>
+              <div class="result-team away">${m.Team2.ShortName||m.Team2.TeamName}</div>
+            </div>
+            <div class="result-league">📅 ${formatDate(m.MatchDateTimeUTC)} · ⏰ ${formatTime(m.MatchDateTimeUTC)}</div>
+          </div>`).join('')}</div>`;
+      } catch(e) { showFallback(); }
+    }
+    async function fetchTable() {
+      try {
+        const res = await fetch(`https://api.openligadb.de/getbltable/bl3/${SEASON_YEAR}`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        document.getElementById('table-container').innerHTML = `
+          <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-size:0.65rem;">
+            <thead><tr style="color:var(--gold);letter-spacing:0.15em;text-transform:uppercase;border-bottom:1px solid var(--border)">
+              <th style="padding:12px 16px;text-align:left">#</th>
+              <th style="padding:12px 16px;text-align:left">Verein</th>
+              <th style="padding:12px 8px;text-align:center">Sp</th>
+              <th style="padding:12px 8px;text-align:center">S</th>
+              <th style="padding:12px 8px;text-align:center">U</th>
+              <th style="padding:12px 8px;text-align:center">N</th>
+              <th style="padding:12px 8px;text-align:center">Tore</th>
+              <th style="padding:12px 8px;text-align:center">Pkt</th>
+            </tr></thead>
+            <tbody>${data.map((t,i) => {
+              const is = t.ShortName?.includes('1860') || t.TeamName?.includes('1860');
+              return `<tr style="${is?'background:rgba(0,51,102,0.4);':i%2===0?'background:rgba(255,255,255,0.02);':''}border-bottom:1px solid rgba(255,255,255,0.04)">
+                <td style="padding:12px 16px;color:var(--muted)">${i+1}</td>
+                <td style="padding:12px 16px;${is?'color:var(--gold);font-weight:500':''}">${is?'🦁 ':''}${t.ShortName||t.TeamName}</td>
+                <td style="padding:12px 8px;text-align:center;color:var(--muted)">${t.Matches}</td>
+                <td style="padding:12px 8px;text-align:center;color:#00c864">${t.Won}</td>
+                <td style="padding:12px 8px;text-align:center;color:var(--muted)">${t.Draw}</td>
+                <td style="padding:12px 8px;text-align:center;color:#c83232">${t.Lost}</td>
+                <td style="padding:12px 8px;text-align:center;color:var(--muted)">${t.Goals}:${t.OpponentGoals}</td>
+                <td style="padding:12px 8px;text-align:center;${is?'color:var(--gold)':''}">${t.Points}</td>
+              </tr>`;
+            }).join('')}</tbody>
+          </table></div>`;
+      } catch(e) {
+        document.getElementById('table-container').innerHTML = '<div class="error-msg">Tabelle konnte nicht geladen werden.</div>';
+      }
+    }
+    function showFallback() {
+      document.getElementById('results-container').innerHTML = `<div class="error-msg">⚠️ Spieldaten konnten nicht geladen werden.<br><br>Aktuelle Ergebnisse findest du auf <strong>kicker.de</strong> oder <strong>dfb.de</strong></div>`;
+      document.getElementById('upcoming-container').innerHTML = `<div class="error-msg">Spielplan nicht verfügbar.</div>`;
+    }
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach((e,i) => {
+        if (e.isIntersecting) { setTimeout(()=>e.target.classList.add('visible'),i*100); obs.unobserve(e.target); }
+      });
+    }, {threshold:0.1});
+    document.querySelectorAll('.reveal,.timeline-item').forEach(el=>obs.observe(el));
+    fetchMatches();
+    fetchTable();
+    setInterval(()=>{fetchMatches();fetchTable();}, 5*60*1000);
+  </script>
+</body>
+</html>
