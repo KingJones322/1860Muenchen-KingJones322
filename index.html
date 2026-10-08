@@ -10,7 +10,7 @@
 :root{--bg:#f3f0e9;--surface:#fffdf8;--surface2:#f7f3e9;--ink:#192536;--muted:#68717d;--line:#ded8ca;--accent:#b08a45;--accent2:#d1b578;--accent-ink:#192536;--live:#b23a36;--up:#39765a;--down:#b23a36;--gold:#a9823f;box-sizing:border-box}
 @media(prefers-color-scheme:dark){:root{--bg:#111923;--surface:#1a2634;--surface2:#202f40;--ink:#f3efe5;--muted:#aab4c0;--line:#344253;--accent:#d0ad68;--accent2:#e0c58d;--accent-ink:#172130;--live:#f07870;--up:#78b698;--down:#f07870;--gold:#dfbf7c}}
 *,*::before,*::after{box-sizing:inherit}
-body{margin:0 auto;background:var(--bg);color:var(--ink);font-family:"Barlow Semi Condensed",system-ui,sans-serif;font-size:17px;line-height:1.5;max-width:760px;padding-bottom:2rem}
+body{margin:0 auto;background:var(--bg);color:var(--ink);font-family:"Barlow Semi Condensed",system-ui,sans-serif;font-size:17px;line-height:1.5;max-width:1120px;padding-bottom:2rem}
 .top{display:flex;align-items:baseline;justify-content:space-between;padding:1rem 1rem .5rem}
 .top h1{margin:0;font-size:1.6rem;font-weight:700;display:flex;align-items:center;gap:.45rem}
 .top h1::before{content:"🏆";font-size:1.1rem;filter:drop-shadow(0 2px 4px rgba(176,138,69,.3))}
@@ -20,6 +20,18 @@ body{margin:0 auto;background:var(--bg);color:var(--ink);font-family:"Barlow Sem
 .leagues button{flex:0 0 auto;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:.4rem .9rem;border-radius:999px;font:inherit;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:.35rem;box-shadow:0 2px 8px rgba(25,37,54,.06)}
 .leagues button::before{content:"⚽";font-size:.8rem;opacity:.9}
 .leagues button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--accent)}
+.leagues button[data-sport="basketball"]::before{content:"🏀"}
+.news{margin:.65rem 1rem 1rem;padding:1rem;background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--line);border-radius:14px;box-shadow:0 8px 24px rgba(25,37,54,.06)}
+.news-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.7rem}
+.news-head h2{margin:0;font-size:1.2rem}
+.news-head span,.news-meta{color:var(--muted);font-size:.85rem}
+.news-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.6rem}
+.news-item{min-width:0;padding:.7rem .8rem;border-left:3px solid var(--accent);background:var(--surface);border-radius:0 8px 8px 0}
+.news-item a{font-weight:700;color:var(--ink);text-decoration:none}
+.news-item a:hover{text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:3px}
+.news-meta{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.35rem}
+.news-meta span+time::before{content:"·";margin-right:.4rem}
+.news-error{color:var(--live)}
 .tabs{display:flex;border-bottom:1px solid var(--line);margin:.25rem 1rem 0}
 .tabs button{flex:1;background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);padding:.7rem 0;font:inherit;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.4rem}
 .tabs button::before{font-size:.9rem}
@@ -33,6 +45,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var
 main{padding:.5rem 1rem}
 .status{color:var(--muted);padding:1.5rem 0;text-align:center}
 .status.error{color:var(--live)}
+.data-note{padding:.5rem .7rem;background:var(--surface2);border-left:3px solid var(--accent);color:var(--muted);font-size:.9rem}
 .table-wrap{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow-x:auto;box-shadow:0 8px 24px rgba(25,37,54,.06)}
 .standings{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
 .standings th,.standings td{padding:.55rem .5rem;text-align:center;border-bottom:1px solid var(--line)}
@@ -59,6 +72,7 @@ main{padding:.5rem 1rem}
 .club-fact strong,.club-fact span{display:block}
 .club-fact span,.player-meta{color:var(--muted);font-size:.88rem}
 .club-description{white-space:pre-line}
+.player-group>h3{font-size:.95rem;font-weight:600;color:var(--muted);margin:1rem 0 .4rem}
 .player-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.55rem}
 .player-card{display:flex;align-items:flex-start;gap:.65rem}
 .player-card img{width:48px;height:48px;object-fit:cover;border-radius:50%;background:var(--line)}
@@ -68,9 +82,12 @@ main{padding:.5rem 1rem}
 .club-source a{color:inherit}
 .club-warning{border-left:3px solid var(--accent);padding:.5rem .7rem;background:var(--surface2);font-size:.9rem}
 .club-error{color:var(--live)}
+.coach-card{padding:.7rem .8rem;background:var(--surface2);border:1px solid var(--line);border-radius:9px}
+.coach-card strong{font-size:1.05rem}
 section h2{font-size:.95rem;font-weight:600;color:var(--muted);margin:1.2rem 0 .4rem}
 .match{background:linear-gradient(145deg,var(--surface),var(--surface2));border:1px solid var(--line);border-radius:14px;margin-bottom:.65rem;box-shadow:0 8px 22px rgba(25,37,54,.07)}
 .match summary{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:.5rem;padding:.75rem;cursor:pointer;list-style:none}
+.match-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:.5rem;padding:.75rem}
 .match summary::-webkit-details-marker{display:none}
 .side{display:flex;align-items:center;gap:.5rem;font-weight:500}
 .side.home{justify-content:flex-end;text-align:right}
@@ -114,11 +131,12 @@ footer a{color:inherit}
 </style>
 </head>
 <body>
-<header class="top"><h1>Fußball-Hub</h1><p class="season" id="season"></p></header>
+<header class="top"><h1>Sport-Hub</h1><p class="season" id="season"></p></header>
 <nav class="leagues" id="leagues" aria-label="Liga wählen"></nav>
+<section class="news" id="news" aria-live="polite" aria-label="Aktuelle Nachrichten"></section>
 <nav class="tabs" role="tablist">
-  <button role="tab" data-view="table" aria-selected="true">Tabelle</button>
-  <button role="tab" data-view="matches" aria-selected="false">Spieltag</button>
+  <button role="tab" data-view="matches" aria-selected="true">Spieltag</button>
+  <button role="tab" data-view="table" aria-selected="false">Tabelle</button>
 </nav>
 <div class="mdnav" id="mdnav" hidden>
   <button id="prev" aria-label="Vorheriger Spieltag">‹</button>
@@ -126,7 +144,7 @@ footer a{color:inherit}
   <button id="next" aria-label="Nächster Spieltag">›</button>
 </div>
 <main id="content" aria-live="polite"></main>
-<footer>Daten: <a href="https://www.openligadb.de" target="_blank" rel="noopener">OpenLigaDB</a> · Vereins- und Spielerdaten: <a href="https://www.thesportsdb.com" target="_blank" rel="noopener">TheSportsDB</a></footer>
+<footer>Spiel- und Tabellendaten: <a href="https://www.openligadb.de" target="_blank" rel="noopener">OpenLigaDB</a>, <a href="https://www.thesportsdb.com" target="_blank" rel="noopener">TheSportsDB</a> und ESPN · Nachrichten: <a href="https://news.google.com" target="_blank" rel="noopener">Google News</a></footer>
 
 <script>
 "use strict";
@@ -136,14 +154,19 @@ const SPORTSDB_BASE = "https://www.thesportsdb.com/api/v1/json/3";
 
 // Regionalliga-Kürzel bitte auf openligadb.de prüfen und ggf. anpassen
 const LEAGUES = [
-  {id:"bl1", name:"Bundesliga"},
-  {id:"bl2", name:"2. Bundesliga"},
-  {id:"bl3", name:"3. Liga"},
-  {id:"rl-nord", name:"Regionalliga Nord"},
-  {id:"rl-nordost", name:"Regionalliga Nordost"},
-  {id:"rl-west", name:"Regionalliga West"},
-  {id:"rl-suedwest", name:"Regionalliga Südwest"},
-  {id:"rl-bayern", name:"Regionalliga Bayern"}
+  {id:"bl1", name:"Bundesliga", sport:"football", provider:"openligadb", search:"Bundesliga"},
+  {id:"bl2", name:"2. Bundesliga", sport:"football", provider:"openligadb", search:"2. Bundesliga"},
+  {id:"bl3", name:"3. Liga", sport:"football", provider:"openligadb", search:"3. Liga"},
+  {id:"pl", name:"Premier League", sport:"football", provider:"openligadb", search:"Premier League"},
+  {id:"es1", name:"La Liga", sport:"football", provider:"sportsdb", leagueId:"4335", search:"La Liga Spanien"},
+  {id:"fr1", name:"Ligue 1", sport:"football", provider:"sportsdb", leagueId:"4334", search:"Ligue 1 Frankreich"},
+  {id:"ucl", name:"Champions League", sport:"football", provider:"openligadb", search:"UEFA Champions League"},
+  {id:"nba", name:"NBA", sport:"basketball", provider:"espn", search:"NBA Basketball"},
+  {id:"rl-nord", name:"Regionalliga Nord", sport:"football", provider:"openligadb", search:"Regionalliga Nord"},
+  {id:"rl-nordost", name:"Regionalliga Nordost", sport:"football", provider:"openligadb", search:"Regionalliga Nordost"},
+  {id:"rl-west", name:"Regionalliga West", sport:"football", provider:"openligadb", search:"Regionalliga West"},
+  {id:"rl-suedwest", name:"Regionalliga Südwest", sport:"football", provider:"openligadb", search:"Regionalliga Südwest"},
+  {id:"rl-bayern", name:"Regionalliga Bayern", sport:"football", provider:"openligadb", search:"Regionalliga Bayern"}
 ];
 
 const ZONES = {bl1:{up:4,down:2}, bl2:{up:2,down:3}, bl3:{up:2,down:4}};
@@ -189,11 +212,14 @@ const BROADCAST_GUIDANCE = {
 
 const SEASON = (() => { const d = new Date(); return d.getMonth() >= 6 ? d.getFullYear() : d.getFullYear() - 1; })();
 
-const state = {league: LEAGUES[0].id, view: "table", day: null, club: null};
+const state = {league: LEAGUES[0].id, view: "matches", day: null, club: null};
 const $ = s => document.querySelector(s);
 const content = $("#content");
 const clubCache = new Map();
+const espnTeamCache = new Map();
+const newsCache = new Map();
 let clubRequest = 0;
+let newsRequest = 0;
 
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
@@ -209,8 +235,62 @@ async function sportsDb(path){
   return r.json();
 }
 
+async function espn(path){
+  const r = await fetch(`https://site.api.espn.com/apis/site/v2/${path}`);
+  if(!r.ok) throw new Error(`ESPN HTTP ${r.status}`);
+  return r.json();
+}
+
+async function wikidata(path){
+  const r = await fetch(`https://www.wikidata.org/w/api.php?${path}&origin=*`);
+  if(!r.ok) throw new Error(`Wikidata HTTP ${r.status}`);
+  return r.json();
+}
+
 function setStatus(msg, err = false){
   content.innerHTML = `<p class="status ${err ? "error" : ""}">${esc(msg)}</p>`;
+}
+
+function renderNews(items, loading = false, error = ""){
+  const league = LEAGUES.find(item => item.id === state.league);
+  const articles = items.map(item => {
+    const url = safeWebsiteUrl(item.link);
+    const date = item.pubDate && !Number.isNaN(Date.parse(item.pubDate))
+      ? new Date(item.pubDate).toLocaleString("de-DE", {day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit"})
+      : "";
+    return `<article class="news-item">
+      ${url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(item.title || "Nachricht öffnen")}</a>` : `<strong>${esc(item.title || "Nachricht")}</strong>`}
+      <div class="news-meta">${item.author ? `<span>${esc(item.author)}</span>` : ""}${date ? `<time datetime="${esc(item.pubDate)}">${esc(date)}</time>` : ""}</div>
+    </article>`;
+  }).join("");
+  $("#news").innerHTML = `<div class="news-head"><h2>Aktuelle Nachrichten · ${esc(league.name)}</h2><span>${loading ? "Nachrichten werden geladen …" : "Google News · zuletzt aktualisiert"}</span></div>
+    ${error ? `<p class="news-error">${esc(error)} <button type="button" data-news-retry>Erneut laden</button></p>` : ""}
+    ${articles ? `<div class="news-grid">${articles}</div>` : !loading && !error ? `<p class="muted">Für diese Liga sind aktuell keine Meldungen verfügbar.</p>` : ""}`;
+}
+
+async function loadNews(){
+  const request = ++newsRequest;
+  const league = LEAGUES.find(item => item.id === state.league);
+  const cached = newsCache.get(league.id);
+  if(cached){
+    renderNews(cached);
+    return;
+  }
+  renderNews([], true);
+  try{
+    const query = new URLSearchParams({q:`${league.search} when:7d`,hl:"de",gl:"DE",ceid:"DE:de"});
+    const feed = `https://news.google.com/rss/search?${query}`;
+    const endpoint = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed)}`;
+    const response = await fetch(endpoint);
+    if(!response.ok) throw new Error(`Nachrichtenquelle HTTP ${response.status}`);
+    const data = await response.json();
+    if(data.status !== "ok") throw new Error(data.message || "Die Nachrichtenquelle hat einen Fehler gemeldet.");
+    const items = (data.items || []).slice().sort((a, b) => Date.parse(b.pubDate || 0) - Date.parse(a.pubDate || 0)).slice(0, 6);
+    newsCache.set(league.id, items);
+    if(request === newsRequest && state.league === league.id) renderNews(items);
+  }catch(error){
+    if(request === newsRequest && state.league === league.id) renderNews([], false, `Nachrichten konnten nicht geladen werden: ${error.message}`);
+  }
 }
 
 const logo = t => t.teamIconUrl ? `<img class="logo" src="${esc(t.teamIconUrl)}" alt="" loading="lazy" width="24" height="24">` : `<span class="logo"></span>`;
@@ -260,6 +340,15 @@ function clubFact(label, value){
   return value ? `<div class="club-fact"><span>${esc(label)}</span><strong>${esc(value)}</strong></div>` : "";
 }
 
+function playerPositionGroup(position){
+  const normalized = String(position || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  if(/\b(goalkeeper|goal keeper|keeper|torwart|torhuter|torhueter)\b/.test(normalized)) return "Torhüter";
+  if(/\b(defender|defence|defense|def|back|verteidiger|abwehr)\b/.test(normalized)) return "Verteidigung";
+  if(/\b(midfielder|midfield|mid|mittelfeld)\b/.test(normalized)) return "Mittelfeld";
+  if(/\b(forward|striker|attacker|winger|sturm|sturmer|stuermer|angreifer)\b/.test(normalized)) return "Sturm";
+  return "Weitere Spieler";
+}
+
 function playerCard(player){
   const age = ageFromDate(player.dateBorn);
   const facts = [
@@ -274,10 +363,113 @@ function playerCard(player){
   return `<article class="player-card">
     ${photo ? `<img src="${esc(photo)}" alt="" loading="lazy">` : ""}
     <div><h3>${esc(player.strPlayer || "Spielername nicht angegeben")}</h3>
-      <p class="player-meta">${esc(facts.join(" · ") || "Keine weiteren Profildaten verfügbar")}</p>
+      ${facts.length ? `<p class="player-meta">${esc(facts.join(" · "))}</p>` : ""}
       ${description ? `<details><summary>Profil und bisherige Vereine</summary><p>${esc(description)}</p></details>` : ""}
     </div>
   </article>`;
+}
+
+function espnRosterLeague(league){
+  const normalized = String(league || "").toLowerCase();
+  if(normalized.includes("german bundesliga")) return "ger.1";
+  if(normalized.includes("2. bundesliga") || normalized.includes("2nd bundesliga")) return "ger.2";
+  if(normalized === "english premier league" || normalized === "premier league england") return "eng.1";
+  if(normalized.includes("spanish la liga")) return "esp.1";
+  if(normalized.includes("french ligue 1")) return "fra.1";
+  if(normalized.includes("italian serie a")) return "ita.1";
+  if(normalized.includes("champions league")) return "uefa.champions";
+  return null;
+}
+
+function normalizePersonOrTeam(value){
+  return String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+function espnTeamMatches(candidate, team){
+  const sought = new Set([team.strTeam, ...(team.strTeamAlternate || "").split(",")].map(normalizePersonOrTeam));
+  const names = [candidate.displayName, candidate.name, candidate.location, candidate.shortDisplayName];
+  return names.some(candidate => sought.has(normalizePersonOrTeam(candidate)));
+}
+
+async function currentEspnRoster(team){
+  const league = espnRosterLeague(team.strLeague);
+  if(!league) return null;
+  let teamsPromise = espnTeamCache.get(league);
+  if(!teamsPromise){
+    teamsPromise = espn(`sports/soccer/${league}/teams?limit=100`).then(data =>
+      (data.sports || []).flatMap(sport =>
+        (sport.leagues || []).flatMap(item => (item.teams || []).map(entry => entry.team))
+      )
+    );
+    espnTeamCache.set(league, teamsPromise);
+  }
+  const teams = await teamsPromise;
+  const espnTeam = teams.find(candidate => espnTeamMatches(candidate, team));
+  if(!espnTeam) return null;
+  const roster = await espn(`sports/soccer/${league}/teams/${encodeURIComponent(espnTeam.id)}/roster`);
+  if(roster.status !== "success" || Number(roster.season?.year) !== SEASON) return null;
+  return (roster.athletes || []).filter(player => player.fullName).map(player => ({
+    strPlayer: player.fullName,
+    strPosition: player.position?.displayName || "",
+    dateBorn: player.dateOfBirth ? player.dateOfBirth.slice(0, 10) : "",
+    strHeight: player.displayHeight || "",
+    strNationality: player.citizenshipCountry || "",
+    strNumber: player.jersey || ""
+  }));
+}
+
+async function currentWikidataCoaches(team){
+  const search = new URLSearchParams({
+    action:"wbsearchentities",
+    search:team.strTeam,
+    language:"en",
+    format:"json"
+  });
+  const results = await wikidata(search.toString());
+  const soughtNames = new Set([team.strTeam, ...(team.strTeamAlternate || "").split(",")].map(normalizePersonOrTeam));
+  const club = (results.search || []).find(item => soughtNames.has(normalizePersonOrTeam(item.label)));
+  if(!club) return null;
+
+  const entityResponse = await fetch(`https://www.wikidata.org/wiki/Special:EntityData/${encodeURIComponent(club.id)}.json`);
+  if(!entityResponse.ok) throw new Error(`Wikidata entity HTTP ${entityResponse.status}`);
+  const entityData = await entityResponse.json();
+  const claims = entityData.entities?.[club.id]?.claims?.P286 || [];
+  const now = Date.now();
+  const currentClaims = claims.filter(claim => {
+    if(claim.rank === "deprecated") return false;
+    const end = claim.qualifiers?.P582?.[0]?.datavalue?.value?.time;
+    if(claim.qualifiers?.P582?.length && (!end || Date.parse(end.slice(1, 11)) <= now)) return false;
+    const start = claim.qualifiers?.P580?.[0]?.datavalue?.value?.time;
+    return !start || Date.parse(start.slice(1, 11)) <= now;
+  });
+  const coachIds = [...new Set(currentClaims.map(claim => claim.mainsnak?.datavalue?.value?.id).filter(Boolean))];
+  if(!coachIds.length) return {names:[], url:`https://www.wikidata.org/wiki/${encodeURIComponent(club.id)}`};
+
+  const labelsQuery = new URLSearchParams({
+    action:"wbgetentities",
+    ids:coachIds.join("|"),
+    props:"labels",
+    languages:"en|de",
+    format:"json"
+  });
+  const labels = await wikidata(labelsQuery.toString());
+  return {
+    names:coachIds.map(id => {
+      const entity = labels.entities?.[id];
+      return entity?.labels?.en?.value || entity?.labels?.de?.value || "";
+    }).filter(Boolean),
+    url:`https://www.wikidata.org/wiki/${encodeURIComponent(club.id)}`
+  };
+}
+
+function playerGroups(players){
+  const order = ["Torhüter", "Verteidigung", "Mittelfeld", "Sturm", "Weitere Spieler"];
+  const groups = new Map(order.map(label => [label, []]));
+  players.forEach(player => groups.get(playerPositionGroup(player.strPosition)).push(player));
+  return order
+    .filter(label => groups.get(label).length)
+    .map(label => `<section class="player-group"><h3>${label}</h3><div class="player-grid">${groups.get(label).map(playerCard).join("")}</div></section>`)
+    .join("");
 }
 
 async function showClub(name){
@@ -290,19 +482,46 @@ async function showClub(name){
     if(!data){
       const search = await sportsDb(`searchteams.php?t=${encodeURIComponent(name)}`);
       const team = (search.teams || []).find(item => teamMatchesName(item, name));
-      data = {team, players: null, playerError: null};
+      data = {team, players: null, playerError: null, coaches: null, coachError: null, rosterSource: null, rosterNotice: null};
       if(team){
-        try{
-          const squad = await sportsDb(`lookup_all_players.php?id=${encodeURIComponent(team.idTeam)}`);
-          data.players = (squad.player || []).filter(player =>
-            player.strSport === "Soccer" &&
-            player.strPlayer &&
-            !String(player.strPosition || "").toLowerCase().includes("coach") &&
-            !String(player.strStatus || "").toLowerCase().includes("coach")
-          );
-        }catch(error){
-          data.playerError = error;
+        const [rosterResult, coachResult] = await Promise.allSettled([
+          (async() => {
+            let espnError = null;
+            const currentRoster = await currentEspnRoster(team).catch(error => {
+              espnError = error;
+              return null;
+            });
+            if(currentRoster?.length) return {players:currentRoster, source:"ESPN · Saisonkader"};
+            let squad;
+            try{
+              squad = await sportsDb(`lookup_all_players.php?id=${encodeURIComponent(team.idTeam)}`);
+            }catch(error){
+              if(espnError) throw new Error(`ESPN: ${espnError.message}; TheSportsDB: ${error.message}`);
+              throw error;
+            }
+            const players = (squad.player || []).filter(player =>
+              player.strSport === "Soccer" &&
+              player.strPlayer &&
+              ["active", "injured"].includes(String(player.strStatus || "").toLowerCase()) &&
+              teamMatchesName({strTeam:player.strTeam}, team.strTeam)
+            );
+            return {
+              players,
+              source:"TheSportsDB · Status aktiv/verletzt",
+              notice:espnError ? `ESPN-Kader nicht verfügbar (${espnError.message}); ersatzweise werden nur bei TheSportsDB als aktiv oder verletzt geführte Spieler angezeigt.` : ""
+            };
+          })(),
+          currentWikidataCoaches(team)
+        ]);
+        if(rosterResult.status === "fulfilled"){
+          data.players = rosterResult.value.players;
+          data.rosterSource = rosterResult.value.source;
+          data.rosterNotice = rosterResult.value.notice;
+        }else{
+          data.playerError = rosterResult.reason;
         }
+        if(coachResult.status === "fulfilled") data.coaches = coachResult.value;
+        else data.coachError = coachResult.reason;
       }
       clubCache.set(name, data);
     }
@@ -324,18 +543,25 @@ async function showClub(name){
     const playersMarkup = data.players === null
       ? `<p class="club-error">Der Kader konnte nicht geladen werden${data.playerError ? ` (${esc(data.playerError.message)})` : ""}.</p><button class="club-back" type="button" data-club-retry>Erneut versuchen</button>`
       : data.players.length
-        ? `<div class="player-grid">${data.players.map(playerCard).join("")}</div>`
-        : `<p>Für diesen Verein sind derzeit keine Spielerdaten hinterlegt.</p>`;
+        ? playerGroups(data.players)
+        : `<p>Die Quelle liefert derzeit keine als aktuell bestätigten Spieler für diesen Verein.</p>`;
+    const coachesMarkup = data.coachError
+      ? `<p class="club-error">Aktuelle Trainerdaten konnten nicht geprüft werden: ${esc(data.coachError.message)}</p><button class="club-back" type="button" data-club-retry>Erneut laden</button>`
+      : data.coaches?.names.length
+        ? `<div class="coach-card"><strong>${data.coaches.names.map(esc).join(", ")}</strong><p class="player-meta">Aktueller Trainer laut Wikidata</p></div>`
+        : `<p>Für diesen Verein ist bei Wikidata kein aktuell amtierender Trainer verzeichnet.</p>`;
     content.innerHTML = `<article class="club-page">
       <button class="club-back" type="button" data-club-back>← Zurück zur Übersicht</button>
       <header class="club-heading">${badge ? `<img src="${esc(badge)}" alt="" loading="lazy">` : ""}<h2>${esc(team.strTeam || name)}</h2></header>
       <div class="club-facts">${facts}</div>
       <section><h2>Geschichte und Hintergrund</h2>${description ? `<p class="club-description">${esc(description)}</p>` : `<p>Für diesen Verein ist keine Hintergrundbeschreibung hinterlegt.</p>`}</section>
-      <section><h2>Spieler und Profile</h2>
-        <p class="club-warning">Die Kaderdaten stammen von TheSportsDB und können unvollständig oder nicht auf dem neuesten Stand sein. Alter, Größe und frühere Stationen werden nur angezeigt, wenn die Quelle sie bereitstellt.</p>
+      <section><h2>Trainer</h2>${coachesMarkup}</section>
+      <section><h2>Aktueller Kader</h2>
+        <p class="club-warning">Angezeigt werden Saisonspieler von ESPN oder Spieler, die TheSportsDB ausdrücklich als aktiv bzw. verletzt führt. Die Datenquellen können unvollständig sein; historische Trainer und ehemalige Spieler werden nicht als aktuell ausgegeben.</p>
+        ${data.rosterNotice ? `<p class="data-note">${esc(data.rosterNotice)}</p>` : ""}
         ${playersMarkup}
       </section>
-      <p class="club-source">Quelle: <a href="https://www.thesportsdb.com" target="_blank" rel="noopener">TheSportsDB</a>${officialWebsite ? ` · <a href="${esc(officialWebsite)}" target="_blank" rel="noopener">Vereinswebsite</a>` : ""}</p>
+      <p class="club-source">Kaderquelle: ${data.rosterSource === "ESPN · Saisonkader" ? `<a href="https://www.espn.com" target="_blank" rel="noopener">ESPN</a>` : `<a href="https://www.thesportsdb.com" target="_blank" rel="noopener">TheSportsDB</a>`} · Trainerquelle: ${data.coaches?.url ? `<a href="${esc(data.coaches.url)}" target="_blank" rel="noopener">Wikidata</a>` : `<a href="https://www.wikidata.org" target="_blank" rel="noopener">Wikidata</a>`}${officialWebsite ? ` · <a href="${esc(officialWebsite)}" target="_blank" rel="noopener">Vereinswebsite</a>` : ""}</p>
     </article>`;
   }catch(error){
     if(request !== clubRequest || state.club !== name) return;
@@ -482,6 +708,9 @@ function buildAnalysis(m, stats, res) {
 }
 
 async function showTable(){
+  const league = LEAGUES.find(item => item.id === state.league);
+  if(league.provider === "sportsdb") return showSportsDbTable(league);
+  if(league.provider === "espn") return showEspnTable();
   setStatus("Lade Tabelle …");
   try{
     const rows = await api(`/getbltable/${state.league}/${SEASON}`);
@@ -506,6 +735,116 @@ async function showTable(){
   }catch(e){
     setStatus("Tabelle konnte nicht geladen werden. Liga-Kürzel prüfen oder später erneut versuchen.", true);
   }
+}
+
+function sportsDbEvents(data){
+  return data.events || data.event || [];
+}
+
+function sportsDbMatchCard(event){
+  const home = event.strHomeTeam || "Heimteam";
+  const away = event.strAwayTeam || "Auswärtsteam";
+  const hasScore = event.intHomeScore !== undefined && event.intHomeScore !== null && event.intHomeScore !== "" &&
+    event.intAwayScore !== undefined && event.intAwayScore !== null && event.intAwayScore !== "";
+  const score = hasScore ? `${event.intHomeScore} : ${event.intAwayScore}` : "–";
+  const time = event.strTimestamp ? new Date(`${event.strTimestamp}Z`).toLocaleTimeString("de-DE", {hour:"2-digit", minute:"2-digit"}) : "";
+  return `<article class="match"><div class="match-row">
+    <span class="side home">${esc(home)}</span><span class="score">${score}</span><span class="side">${esc(away)}</span>
+  </div><p class="meta">${esc(event.dateEvent || "Termin offen")}${time ? ` · ${esc(time)}` : ""}</p></article>`;
+}
+
+async function showSportsDbMatches(league){
+  setStatus("Lade Spieltag …");
+  try{
+    const season = `${SEASON}-${SEASON + 1}`;
+    if(state.day == null){
+      const upcoming = await sportsDb(`eventsnextleague.php?id=${league.leagueId}`);
+      const previous = upcoming.events?.length ? null : await sportsDb(`eventspastleague.php?id=${league.leagueId}`);
+      const event = upcoming.events?.[0] || previous?.events?.[0];
+      state.day = Number(event?.intRound) || 1;
+    }
+    $("#dayLabel").textContent = `${state.day}. Spieltag`;
+    const data = await sportsDb(`eventsround.php?id=${league.leagueId}&r=${state.day}&s=${season}`);
+    const events = sportsDbEvents(data).slice().sort((a, b) => String(a.dateEvent || "").localeCompare(String(b.dateEvent || "")));
+    if(!events.length) return setStatus(`Für den ${state.day}. Spieltag sind bei der Datenquelle keine Spiele hinterlegt.`);
+    const byDay = {};
+    events.forEach(event => {
+      const key = event.dateEvent || "Termin offen";
+      (byDay[key] = byDay[key] || []).push(event);
+    });
+    content.innerHTML = `<p class="data-note">Spielplandaten: TheSportsDB. Die kostenlose Datenquelle kann unvollständige Spieltage liefern.</p>${Object.entries(byDay).map(([date, games]) => `<section><h2>${esc(date)}</h2>${games.map(sportsDbMatchCard).join("")}</section>`).join("")}`;
+  }catch(error){
+    setStatus(`Spiele konnten nicht geladen werden: ${error.message}`, true);
+  }
+}
+
+async function showEspnMatches(){
+  setStatus("Lade NBA-Spielplan …");
+  try{
+    if(state.day == null) state.day = new Date().toISOString().slice(0, 10);
+    const day = state.day.replaceAll("-", "");
+    $("#dayLabel").textContent = new Date(`${state.day}T12:00:00`).toLocaleDateString("de-DE", {weekday:"long", day:"2-digit", month:"long", year:"numeric"});
+    const data = await espn(`sports/basketball/nba/scoreboard?dates=${day}&limit=100`);
+    const events = data.events || [];
+    if(!events.length) return setStatus("Für diesen Tag sind keine NBA-Spiele angesetzt. Mit den Pfeilen kannst du andere Tage aufrufen.");
+    content.innerHTML = events.map(event => {
+      const competition = event.competitions?.[0];
+      const competitors = competition?.competitors || [];
+      const home = competitors.find(team => team.homeAway === "home");
+      const away = competitors.find(team => team.homeAway === "away");
+      if(!home || !away) return "";
+      const completed = event.status?.type?.completed;
+      const score = team => team.score ?? "–";
+      const date = event.date ? new Date(event.date).toLocaleTimeString("de-DE", {hour:"2-digit", minute:"2-digit"}) : "";
+      return `<article class="match"><div class="match-row">
+        <span class="side home">${esc(home.team.displayName)}</span><span class="score">${completed || home.score ? `${esc(score(home))} : ${esc(score(away))}` : "–"}</span><span class="side">${esc(away.team.displayName)}</span>
+      </div><p class="meta">${esc(event.status?.type?.shortDetail || event.status?.type?.detail || "Spiel angesetzt")}${date ? ` · ${esc(date)}` : ""}</p></article>`;
+    }).join("");
+  }catch(error){
+    setStatus(`NBA-Spielplan konnte nicht geladen werden: ${error.message}`, true);
+  }
+}
+
+async function showSportsDbTable(league){
+  setStatus("Lade Tabelle …");
+  try{
+    const season = `${SEASON}-${SEASON + 1}`;
+    const data = await sportsDb(`lookuptable.php?l=${league.leagueId}&s=${season}`);
+    const rows = data.table || [];
+    if(!rows.length) return setStatus("Für diese Saison sind noch keine Tabellendaten verfügbar.");
+    const body = rows.map((row, index) => `<tr>
+      <td class="rank">${esc(row.intRank || index + 1)}</td><td class="team">${esc(row.strTeam || "Team")}</td>
+      <td>${esc(row.intPlayed ?? "–")}</td><td class="hide-s">${esc(row.intWin ?? "–")}-${esc(row.intDraw ?? "–")}-${esc(row.intLoss ?? "–")}</td>
+      <td>${esc(row.intGoalDifference ?? "–")}</td><td class="pts">${esc(row.intPoints ?? "–")}</td>
+    </tr>`).join("");
+    content.innerHTML = `${rows.length < 10 ? `<p class="data-note">Die Datenquelle stellt derzeit nur ${rows.length} Tabellenplätze bereit; die Anzeige ist daher möglicherweise unvollständig.</p>` : ""}<div class="table-wrap"><table class="standings">
+      <thead><tr><th>#</th><th class="team">Verein</th><th>Sp</th><th class="hide-s">S-U-N</th><th>Diff</th><th>Pkt</th></tr></thead><tbody>${body}</tbody></table></div>`;
+  }catch(error){
+    setStatus(`Tabelle konnte nicht geladen werden: ${error.message}`, true);
+  }
+}
+
+async function showEspnTable(){
+  setStatus("Lade NBA-Tabelle …");
+  try{
+    const data = await espn("sports/basketball/nba/standings");
+    const entries = [];
+    const collect = node => {
+      if(!node || typeof node !== "object") return;
+      if(Array.isArray(node.entries)) entries.push(...node.entries);
+      if(Array.isArray(node.children)) node.children.forEach(collect);
+      if(node.standings) collect(node.standings);
+    };
+    collect(data);
+    if(!entries.length) return setStatus("Die NBA-Tabelle ist noch nicht verfügbar. Sie erscheint, sobald ESPN aktuelle Ligastände veröffentlicht.");
+    content.innerHTML = `<div class="table-wrap"><table class="standings"><thead><tr><th>#</th><th class="team">Team</th><th>Bilanz</th><th class="hide-s">Siege</th></tr></thead><tbody>${entries.map((entry, index) => {
+      const wins = entry.stats?.find(stat => stat.name === "wins");
+      const losses = entry.stats?.find(stat => stat.name === "losses");
+      return `<tr><td class="rank">${index + 1}</td><td class="team">${esc(entry.team?.displayName || entry.team?.name || "Team")}</td><td>${esc(wins?.displayValue || wins?.value || "–")}-${esc(losses?.displayValue || losses?.value || "–")}</td><td class="hide-s">${esc(wins?.displayValue || wins?.value || "–")}</td></tr>`;
+    }).join("")}</tbody></table></div>`;
+  }catch(error){
+    setStatus(`NBA-Tabelle konnte nicht geladen werden: ${error.message}`, true);
+  }
 }
 
 function matchCard(m){
@@ -571,6 +910,9 @@ function matchCard(m){
 }
 
 async function showMatches(){
+  const league = LEAGUES.find(item => item.id === state.league);
+  if(league.provider === "sportsdb") return showSportsDbMatches(league);
+  if(league.provider === "espn") return showEspnMatches();
   setStatus("Lade Spieltag …");
   try{
     if(state.day == null){
@@ -606,7 +948,7 @@ function render(){
 }
 
 function buildLeagueNav(){
-  $("#leagues").innerHTML = LEAGUES.map(l => `<button data-id="${esc(l.id)}" aria-pressed="${l.id === state.league}">${esc(l.name)}</button>`).join("");
+  $("#leagues").innerHTML = LEAGUES.map(l => `<button data-id="${esc(l.id)}" data-sport="${esc(l.sport)}" aria-pressed="${l.id === state.league}">${esc(l.name)}</button>`).join("");
 }
 
 $("#leagues").addEventListener("click", e => {
@@ -615,8 +957,9 @@ $("#leagues").addEventListener("click", e => {
   state.club = null;
   state.league = b.dataset.id;
   state.day = null;
-  buildLeagueNav();
-  render();
+  buildLeagueNav();
+  loadNews();
+render();
 });
 
 document.querySelector(".tabs").addEventListener("click", e => {
@@ -625,6 +968,12 @@ document.querySelector(".tabs").addEventListener("click", e => {
   state.club = null;
   state.view = b.dataset.view;
   render();
+});
+
+$("#news").addEventListener("click", e => {
+  if(!e.target.closest("[data-news-retry]")) return;
+  newsCache.delete(state.league);
+  loadNews();
 });
 
 content.addEventListener("click", e => {
@@ -648,11 +997,24 @@ content.addEventListener("click", e => {
   }
 });
 
-$("#prev").addEventListener("click", () => { if(state.day > 1){ state.day--; showMatches(); } });
-$("#next").addEventListener("click", () => { state.day++; showMatches(); });
+function moveMatchday(offset){
+  if(LEAGUES.find(item => item.id === state.league).provider === "espn"){
+    const date = new Date(`${state.day || new Date().toISOString().slice(0, 10)}T12:00:00`);
+    date.setDate(date.getDate() + offset);
+    state.day = date.toISOString().slice(0, 10);
+  }else{
+    const current = Number(state.day) || 1;
+    state.day = Math.max(1, current + offset);
+  }
+  showMatches();
+}
+
+$("#prev").addEventListener("click", () => moveMatchday(-1));
+$("#next").addEventListener("click", () => moveMatchday(1));
 
 $("#season").textContent = `Saison ${SEASON}/${String(SEASON + 1).slice(2)}`;
 buildLeagueNav();
+loadNews();
 render();
 </script>
 </body>
