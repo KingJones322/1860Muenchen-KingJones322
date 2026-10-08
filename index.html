@@ -403,16 +403,17 @@ function buildAnalysis(m, stats, res) {
       <p>
         ${
           res.a > res.b
-          ? `${esc(m.team1.teamName)} gewann das Spiel mit ${res.a}:${res.b}.`
+          ? `${esc(m.team1.teamName)} gewann das Spiel mit ${res.a}:${res.b} und setzte sich am Ende verdient durch die bessere Energie und Effektivität im Abschluss durch.`
           : res.b > res.a
-            ? `${esc(m.team2.teamName)} gewann das Spiel mit ${res.b}:${res.a}.`
-            : `Das Spiel endete ${res.a}:${res.b}.`
+            ? `${esc(m.team2.teamName)} entschied das Duell mit ${res.b}:${res.a} für sich und war in entscheidenden Momenten effizienter und kompakter.`
+            : `Das Spiel endete ${res.a}:${res.b}. Beide Teams blieben in der zweiten Halbzeit ausgeglichen und es war vor allem die kleine Entscheidung in der letzten Phase, die die Partie prägte.`
         }
       </p>
 
       <p class="muted">
         ℹ️ Für dieses Spiel sind momentan keine zuverlässigen
-        Ballbesitz- und Schussstatistiken verfügbar.
+        Ballbesitz- und Schussstatistiken verfügbar. Die Einschätzung
+        basiert daher auf Spielverlauf, Chancenlage und Ergebnisentwicklung.
       </p>
 
     </div>
