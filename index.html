@@ -233,154 +233,91 @@ function broadcastHtml(m) {
 }
 
 function buildAnalysis(m, stats, res) {
-
-  // Wenn echte Statistikdaten vorhanden sind
-  if (stats && stats.note) {
-
-    return `
-      <div class="analysis">
-        <div class="analysis-title">
-          🧠 Kurz-Analyse
-        </div>
-
-        <p>${esc(stats.note)}</p>
-
-        ${
-          stats.possession
-          ? `
-          <div class="possession">
-
-            <div class="pos">
-              <strong>${stats.possession[0]}%</strong>
-              <div>${esc(m.team1.teamName)}</div>
-
-              <div class="bar">
-                <div
-                  class="fill"
-                  style="width:${stats.possession[0]}%">
-                </div>
-              </div>
-            </div>
-
-            <div class="pos">
-              <strong>${stats.possession[1]}%</strong>
-              <div>${esc(m.team2.teamName)}</div>
-
-              <div class="bar">
-                <div
-                  class="fill"
-                  style="width:${stats.possession[1]}%">
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          <p class="muted">
-            Mehr Ballbesitz:
-            <strong>
-              ${
-                stats.possession[0] > stats.possession[1]
-                  ? esc(m.team1.teamName)
-                  : stats.possession[1] > stats.possession[0]
-                    ? esc(m.team2.teamName)
-                    : "beide Mannschaften gleich"
-              }
-            </strong>
-          </p>
-          `
-          : ""
-        }
-
-        ${
-          stats.shots || stats.shotsOnTarget || stats.xg
-          ? `
-          <div class="stat-grid">
-
-            ${
-              stats.shots
-              ? `
-              <div class="stat">
-                <b>${stats.shots[0]} : ${stats.shots[1]}</b>
-                <span>Schüsse</span>
-              </div>
-              `
-              : ""
-            }
-
-            ${
-              stats.shotsOnTarget
-              ? `
-              <div class="stat">
-                <b>${stats.shotsOnTarget[0]} : ${stats.shotsOnTarget[1]}</b>
-                <span>Schüsse aufs Tor</span>
-              </div>
-              `
-              : ""
-            }
-
-            ${
-              stats.xg
-              ? `
-              <div class="stat">
-                <b>${stats.xg[0]} : ${stats.xg[1]}</b>
-                <span>xG</span>
-              </div>
-              `
-              : ""
-            }
-
-          </div>
-          `
-          : ""
-        }
-
-      </div>
-    `;
-  }
-
   if (!res) {
-    const venue = m.location && m.location.locationCity
-      ? ` Austragungsort laut Spieldaten: ${esc(m.location.locationCity)}.`
-      : "";
+    const league = LEAGUES.find(item => item.id === state.league)?.name || "Ligawettbewerb";
+    const venue = m.location && m.location.locationCity ? esc(m.location.locationCity) : null;
+    const schedule = fmtDate(m.matchDateTime);
+    const previewNote = stats && stats.note ? `<p>${esc(stats.note)}</p>` : "";
     return `
       <div class="analysis">
-        <div class="analysis-title">
-          Spielbeschreibung
-        </div>
-
-        <p class="description-lead"><strong>${esc(m.team1.teamName)} gegen ${esc(m.team2.teamName)}</strong> – die Begegnung im ${esc(LEAGUES.find(league => league.id === state.league)?.name || "Ligawettbewerb")} steht im Mittelpunkt dieses Spieltags.</p>
-        <p>Der Anstoß ist für ${esc(fmtDate(m.matchDateTime))} angesetzt.${venue} Sobald der Datenanbieter Spielstand, Halbzeit und Torschützen meldet, werden diese Informationen in der Spielübersicht ergänzt. Bis dahin gibt es noch keinen bestätigten Spielverlauf.</p>
-        <p class="muted">Die verfügbaren Daten enthalten keine verlässlichen Angaben zu Formkurven, Aufstellungen oder Verletzungen. Deshalb verzichtet die Vorschau bewusst auf Spekulationen zu Taktik und Ausgang.</p>
+        <div class="analysis-title">Ausführliche Spielvorschau</div>
+        <p class="description-lead"><strong>${esc(m.team1.teamName)} gegen ${esc(m.team2.teamName)}</strong> – das Duell gehört zum ${esc(league)}-Spieltag. Anstoß ist laut Spielplan am ${esc(schedule)}${venue ? ` in ${venue}` : ""}.</p>
+        <p>Vor dem Anpfiff stehen zunächst die grundlegenden Fragen im Mittelpunkt: Welche Mannschaft findet schneller in ihren Rhythmus? Wem gelingt es, die eigenen Angriffe sauber bis in gefährliche Räume zu tragen, und welches Team kann gegnerische Vorstöße früh unterbrechen? Die Antworten darauf werden sich erst im tatsächlichen Spielverlauf zeigen; aus den vorliegenden Angaben lässt sich keine verlässliche Prognose ableiten.</p>
+        <p>Nach Spielbeginn ergänzen wir die Übersicht um den gemeldeten Spielstand und – sofern verfügbar – Halbzeitstand, Torschützen und Spielminuten. So lässt sich später nachvollziehen, wann sich das Ergebnis verändert hat und wie sich die Partie anhand der dokumentierten Ereignisse entwickelt hat.</p>
+        ${previewNote}
+        <p class="muted">Aktuell liegen noch keine Ergebnisdaten für diese Begegnung vor. Verifizierte Angaben zu Tabellenform, Aufstellungen, Ausfällen und taktischer Ausrichtung sind ebenfalls nicht verfügbar. Deshalb enthält die Vorschau keine erfundenen Team- oder Spielerinformationen.</p>
       </div>
     `;
   }
 
-  const winner = res.a === res.b
-    ? `${m.matchIsFinished ? "Die Partie endete" : "Die Partie steht"} ${res.a}:${res.b}.`
+  const team1 = m.team1.teamName;
+  const team2 = m.team2.teamName;
+  const outcome = res.a === res.b
+    ? `${m.matchIsFinished ? "Die Begegnung endete" : "Der aktuelle Spielstand lautet"} ${res.a}:${res.b}.`
     : res.a > res.b
-      ? `${esc(m.team1.teamName)} ${m.matchIsFinished ? "gewann" : "führt"} ${res.a}:${res.b} gegen ${esc(m.team2.teamName)}.`
-      : `${esc(m.team2.teamName)} ${m.matchIsFinished ? "gewann" : "führt"} ${res.b}:${res.a} gegen ${esc(m.team1.teamName)}.`;
-  const scoring = (m.goals || [])
+      ? `${esc(team1)} ${m.matchIsFinished ? "gewann" : "führt"} mit ${res.a}:${res.b} gegen ${esc(team2)}.`
+      : `${esc(team2)} ${m.matchIsFinished ? "gewann" : "führt"} mit ${res.b}:${res.a} gegen ${esc(team1)}.`;
+  const goals = (m.goals || [])
     .slice()
-    .sort((a, b) => a.matchMinute - b.matchMinute)
-    .map(goal => `${goal.matchMinute ?? "?"}. Minute: ${esc(goal.goalGetterName || "Torschütze unbekannt")} (${goal.scoreTeam1}:${goal.scoreTeam2})`)
-    .join("; ");
-  const status = m.matchIsFinished ? "Endstand" : "Aktueller Spielstand";
+    .sort((a, b) => (a.matchMinute ?? Number.MAX_SAFE_INTEGER) - (b.matchMinute ?? Number.MAX_SAFE_INTEGER));
+  const goalSummary = goals.length
+    ? goals.map(goal => `${goal.matchMinute ?? "ohne Minutenangabe"}. Minute: ${esc(goal.goalGetterName || "Torschütze nicht gemeldet")} (${goal.scoreTeam1}:${goal.scoreTeam2}${goal.isPenalty ? ", Elfmeter" : ""}${goal.isOwnGoal ? ", Eigentor" : ""})`).join("; ")
+    : null;
   const halfTimeScore = halfTime(m);
-  const venue = m.location && m.location.locationCity
-    ? ` Austragungsort laut Spieldaten: ${esc(m.location.locationCity)}.`
+  const statsNote = stats && stats.note ? `<p>${esc(stats.note)}</p>` : "";
+  const analysisPoints = [];
+  const statCards = [];
+
+  if (stats && stats.possession) {
+    const [homePossession, awayPossession] = stats.possession;
+    const possessionLeader = homePossession === awayPossession
+      ? "Beide Teams hatten laut den gemeldeten Werten gleich viel Ballbesitz."
+      : `${esc(homePossession > awayPossession ? team1 : team2)} hatte mit ${Math.max(homePossession, awayPossession)} % den höheren Ballbesitzanteil.`;
+    analysisPoints.push(`${possessionLeader} Ballbesitz beschreibt die Zeit mit dem Ball, sagt allein aber nicht aus, welche Mannschaft die besseren Torchancen hatte.`);
+  }
+
+  if (stats && stats.shots) {
+    const [homeShots, awayShots] = stats.shots;
+    const leader = homeShots === awayShots ? "Beide Teams kamen auf gleich viele" : `${esc(homeShots > awayShots ? team1 : team2)} verzeichnete mehr`;
+    analysisPoints.push(`${leader} Abschlüsse (${homeShots} zu ${awayShots}).`);
+    statCards.push(`<div class="stat"><b>${homeShots} : ${awayShots}</b><span>Schüsse</span></div>`);
+  }
+
+  if (stats && stats.shotsOnTarget) {
+    const [homeShotsOnTarget, awayShotsOnTarget] = stats.shotsOnTarget;
+    const leader = homeShotsOnTarget === awayShotsOnTarget ? "Beide Teams hatten gleich viele" : `${esc(homeShotsOnTarget > awayShotsOnTarget ? team1 : team2)} hatte mehr`;
+    analysisPoints.push(`${leader} Schüsse aufs Tor (${homeShotsOnTarget} zu ${awayShotsOnTarget}); dieser Wert zählt nur Abschlüsse, die auf das Tor kamen.`);
+    statCards.push(`<div class="stat"><b>${homeShotsOnTarget} : ${awayShotsOnTarget}</b><span>Schüsse aufs Tor</span></div>`);
+  }
+
+  if (stats && stats.xg) {
+    const [homeXg, awayXg] = stats.xg;
+    const leader = homeXg === awayXg ? "Der gemeldete xG-Wert ist für beide Teams gleich" : `${esc(homeXg > awayXg ? team1 : team2)} weist den höheren xG-Wert auf`;
+    analysisPoints.push(`${leader} (${homeXg} zu ${awayXg}). xG (Expected Goals) schätzt die Qualität der erfassten Abschlüsse ein und ist kein zusätzlicher Spielstand.`);
+    statCards.push(`<div class="stat"><b>${homeXg} : ${awayXg}</b><span>xG</span></div>`);
+  }
+
+  const possessionMarkup = stats && stats.possession
+    ? `<div class="possession">
+        <div class="pos"><strong>${stats.possession[0]}%</strong><div>${esc(team1)}</div><div class="bar"><div class="fill" style="width:${stats.possession[0]}%"></div></div></div>
+        <div class="pos"><strong>${stats.possession[1]}%</strong><div>${esc(team2)}</div><div class="bar"><div class="fill" style="width:${stats.possession[1]}%"></div></div>
+      </div>`
     : "";
+  const venue = m.location && m.location.locationCity ? ` Austragungsort laut Spieldaten: ${esc(m.location.locationCity)}.` : "";
+  const status = m.matchIsFinished ? "Auswertung nach Abpfiff" : "Zwischenstand und bisheriger Verlauf";
 
   return `
     <div class="analysis">
-      <div class="analysis-title">
-        Spielbeschreibung
-      </div>
-      <p class="description-lead">${status}: <strong>${winner}</strong>${m.matchIsFinished ? " Die Begegnung ist beendet." : " Das Spiel ist noch nicht beendet."}${venue}</p>
-      ${halfTimeScore ? `<p>Zur Halbzeit stand es ${esc(halfTimeScore)}. Damit lässt sich der gemeldete Zwischenstand mit dem aktuellen bzw. finalen Ergebnis vergleichen.</p>` : ""}
-      <p>${scoring ? `Der dokumentierte Spielverlauf: ${scoring}.` : "Für dieses Spiel wurden keine einzelnen Tore oder Torschützen übermittelt. Die Beschreibung stützt sich daher auf den gemeldeten Spielstand und erfindet keine zusätzlichen Spielszenen."}</p>
-      <p class="muted">Die Datenquelle stellt für diese Partie keine verlässlichen Angaben zu Ballbesitz, Abschlüssen, Aufstellungen oder Spielphasen bereit. Eine weitergehende taktische Bewertung wäre deshalb nicht belastbar.</p>
+      <div class="analysis-title">${status}</div>
+      <p class="description-lead"><strong>${esc(team1)} – ${esc(team2)}</strong>: ${outcome}${m.matchIsFinished ? " Das Spiel ist beendet." : " Die Partie läuft noch."}${venue}</p>
+      ${halfTimeScore ? `<p><strong>Halbzeit:</strong> Zur Pause stand es ${esc(halfTimeScore)}. Im Vergleich dazu lautet der ${m.matchIsFinished ? "Endstand" : "aktuelle Spielstand"} ${res.a}:${res.b}.` : ""}
+      <p><strong>Spielverlauf:</strong> ${goalSummary ? `Die übermittelten Torereignisse in zeitlicher Reihenfolge: ${goalSummary}.` : "Der Datenanbieter hat für diese Partie keine einzelnen Tore mit Minute oder Torschützen gemeldet. Daher lässt sich aus den verfügbaren Informationen kein genauer Ablauf der Treffer rekonstruieren."}</p>
+      ${statsNote}
+      ${analysisPoints.length ? `<p><strong>Einordnung der Zahlen:</strong> ${analysisPoints.join(" ")}</p>` : ""}
+      ${possessionMarkup}
+      ${statCards.length ? `<div class="stat-grid">${statCards.join("")}</div>` : ""}
+      <p>Der Spielstand zeigt das Ergebnis, während Halbzeitstand und Torfolge den zeitlichen Rahmen der Partie ergänzen. Wo zusätzliche Werte gemeldet wurden, helfen Ballbesitz, Schüsse und xG dabei, einzelne Aspekte des Spiels getrennt zu betrachten – sie ersetzen jedoch keine vollständigen Daten zu Chancen, Spielphasen oder taktischen Abläufen.</p>
+      <p class="muted">Diese Auswertung basiert ausschließlich auf den hier verfügbaren Ergebnis-, Tor- und Statistikdaten. Aufstellungen, Auswechslungen, Karten, Verletzungen und detaillierte Chancenverläufe werden nicht durchgehend geliefert; Aussagen zu diesen Punkten oder zu einer vermeintlichen Überlegenheit lassen sich deshalb nicht verlässlich treffen.</p>
     </div>
   `;
 }
