@@ -7,19 +7,24 @@
 <title>Fußball-Hub</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f2f5f1;--surface:#fff;--ink:#15211a;--muted:#5e6b63;--line:#d8dfd9;--accent:#1d7a4b;--accent-ink:#fff;--live:#d6332b;--up:#1d7a4b;--down:#d6332b;box-sizing:border-box}
-@media(prefers-color-scheme:dark){:root{--bg:#101713;--surface:#18211b;--ink:#e8efe9;--muted:#9aa8a0;--line:#2a372e;--accent:#3fbf80;--accent-ink:#0b130e;--live:#ff6a5f;--up:#3fbf80;--down:#ff6a5f}}
+:root{--bg:#f2f5f1;--surface:#fff;--surface2:#f7faf7;--ink:#15211a;--muted:#5e6b63;--line:#d8dfd9;--accent:#1d7a4b;--accent2:#6cc690;--accent-ink:#fff;--live:#d6332b;--up:#1d7a4b;--down:#d6332b;--gold:#c79617;box-sizing:border-box}
+@media(prefers-color-scheme:dark){:root{--bg:#101713;--surface:#18211b;--surface2:#1c2a22;--ink:#e8efe9;--muted:#9aa8a0;--line:#2a372e;--accent:#3fbf80;--accent2:#6ec99e;--accent-ink:#0b130e;--live:#ff6a5f;--up:#3fbf80;--down:#ff6a5f;--gold:#f0c35d}}
 *,*::before,*::after{box-sizing:inherit}
 body{margin:0 auto;background:var(--bg);color:var(--ink);font-family:"Barlow Semi Condensed",system-ui,sans-serif;font-size:17px;line-height:1.4;max-width:720px;padding-bottom:2rem}
 .top{display:flex;align-items:baseline;justify-content:space-between;padding:1rem 1rem .5rem}
-.top h1{margin:0;font-size:1.6rem;font-weight:700}
+.top h1{margin:0;font-size:1.6rem;font-weight:700;display:flex;align-items:center;gap:.45rem}
+.top h1::before{content:"🏆";font-size:1.1rem;filter:drop-shadow(0 2px 4px rgba(29,122,75,.25))}
 .season{margin:0;color:var(--muted);font-size:.95rem}
 .leagues{display:flex;gap:.5rem;overflow-x:auto;padding:.5rem 1rem;scrollbar-width:none}
 .leagues::-webkit-scrollbar{display:none}
-.leagues button{flex:0 0 auto;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:.4rem .9rem;border-radius:999px;font:inherit;font-weight:500;cursor:pointer}
+.leagues button{flex:0 0 auto;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:.4rem .9rem;border-radius:999px;font:inherit;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:.35rem;box-shadow:0 2px 6px rgba(0,0,0,.03)}
+.leagues button::before{content:"⚽";font-size:.8rem;opacity:.9}
 .leagues button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .tabs{display:flex;border-bottom:1px solid var(--line);margin:.25rem 1rem 0}
-.tabs button{flex:1;background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);padding:.7rem 0;font:inherit;font-weight:600;cursor:pointer}
+.tabs button{flex:1;background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);padding:.7rem 0;font:inherit;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.4rem}
+.tabs button::before{font-size:.9rem}
+.tabs button[data-view="table"]::before{content:"📊"}
+.tabs button[data-view="matches"]::before{content:"📅"}
 .tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
 button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .mdnav{display:flex;align-items:center;justify-content:space-between;padding:.6rem 1rem}
@@ -42,7 +47,7 @@ main{padding:.5rem 1rem}
 @media(max-width:420px){.hide-s{display:none}}
 .logo{width:24px;height:24px;object-fit:contain;flex:0 0 auto;display:inline-block}
 section h2{font-size:.95rem;font-weight:600;color:var(--muted);margin:1.2rem 0 .4rem}
-.match{background:var(--surface);border:1px solid var(--line);border-radius:8px;margin-bottom:.4rem}
+.match{background:linear-gradient(180deg,var(--surface),var(--surface2));border:1px solid var(--line);border-radius:12px;margin-bottom:.5rem;box-shadow:0 6px 18px rgba(0,0,0,.04)}
 .match summary{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:.5rem;padding:.75rem;cursor:pointer;list-style:none}
 .match summary::-webkit-details-marker{display:none}
 .side{display:flex;align-items:center;gap:.5rem;font-weight:500}
@@ -68,10 +73,11 @@ section h2{font-size:.95rem;font-weight:600;color:var(--muted);margin:1.2rem 0 .
 .pos strong{font-size:1.3rem}
 .bar{height:7px;background:var(--line);border-radius:99px;margin-top:.45rem;overflow:hidden}
 .fill{height:100%;background:linear-gradient(90deg,var(--accent),#6cc690);border-radius:99px}
-.video{display:inline-block;padding:.5rem .9rem;border-radius:6px;text-decoration:none;font-weight:600;border:1px solid var(--accent);color:var(--accent)}
+.video{display:inline-block;padding:.5rem .9rem;border-radius:6px;text-decoration:none;font-weight:600;border:1px solid var(--accent);color:var(--accent);box-shadow:0 4px 10px rgba(29,122,75,.08)}
 .video.direct{background:var(--accent);color:var(--accent-ink)}
-.broadcast{margin:.75rem 0;padding:.8rem;border-radius:11px;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 12%,var(--surface)),var(--surface));border:1px solid color-mix(in srgb,var(--accent) 35%,var(--line))}
+.broadcast{margin:.75rem 0;padding:.8rem;border-radius:11px;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 12%,var(--surface)),var(--surface));border:1px solid color-mix(in srgb,var(--accent) 35%,var(--line));box-shadow:0 6px 16px rgba(29,122,75,.06)}
 .broadcast-head{font-weight:800;display:flex;align-items:center;gap:.4rem}
+.broadcast-head::before{content:"📺";font-size:1rem}
 .broadcast small{display:block;color:var(--muted);margin-top:.25rem}
 .broadcast a{display:inline-block;margin-top:.55rem;margin-right:.3rem;padding:.45rem .75rem;border-radius:7px;text-decoration:none;font-weight:700;border:1px solid var(--accent);color:var(--accent)}
 .broadcast a.direct{background:var(--accent);color:var(--accent-ink)}
