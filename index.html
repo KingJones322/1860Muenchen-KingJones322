@@ -56,8 +56,30 @@ section h2{font-size:.95rem;font-weight:600;color:var(--muted);margin:1.2rem 0 .
 .goals .min{width:2.4rem;color:var(--muted);text-align:right}
 .goals .gs{font-weight:600;font-variant-numeric:tabular-nums}
 .muted{color:var(--muted)}
+.analysis{border:1px solid var(--line);background:var(--surface);border-radius:11px;padding:.85rem;margin:.75rem 0;box-shadow:0 3px 12px rgba(0,0,0,.04)}
+.analysis-title{font-weight:800;font-size:1.05rem;margin-bottom:.4rem}
+.analysis p{margin:.3rem 0}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.45rem;margin-top:.7rem}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:.65rem .4rem;text-align:center}
+.stat b{display:block;font-size:1.1rem}
+.stat span{display:block;color:var(--muted);font-size:.78rem}
+.possession{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.7rem}
+.pos{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:.65rem;text-align:center}
+.pos strong{font-size:1.3rem}
+.bar{height:7px;background:var(--line);border-radius:99px;margin-top:.45rem;overflow:hidden}
+.fill{height:100%;background:linear-gradient(90deg,var(--accent),#6cc690);border-radius:99px}
 .video{display:inline-block;padding:.5rem .9rem;border-radius:6px;text-decoration:none;font-weight:600;border:1px solid var(--accent);color:var(--accent)}
 .video.direct{background:var(--accent);color:var(--accent-ink)}
+.broadcast{margin:.75rem 0;padding:.8rem;border-radius:11px;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 12%,var(--surface)),var(--surface));border:1px solid color-mix(in srgb,var(--accent) 35%,var(--line))}
+.broadcast-head{font-weight:800;display:flex;align-items:center;gap:.4rem}
+.broadcast small{display:block;color:var(--muted);margin-top:.25rem}
+.broadcast a{display:inline-block;margin-top:.55rem;margin-right:.3rem;padding:.45rem .75rem;border-radius:7px;text-decoration:none;font-weight:700;border:1px solid var(--accent);color:var(--accent)}
+.broadcast a.direct{background:var(--accent);color:var(--accent-ink)}
+.badges{display:flex;gap:.35rem;flex-wrap:wrap;margin:.5rem 0}
+.badge{display:inline-flex;align-items:center;gap:.25rem;border-radius:999px;padding:.22rem .55rem;font-size:.78rem;font-weight:700;background:var(--surface);border:1px solid var(--line)}
+.badge.green{border-color:#45b77c;color:var(--accent)}
+.badge.gold{border-color:var(--gold);color:var(--gold)}
+.goal-icon{font-size:1rem}
 footer{color:var(--muted);font-size:.85rem;padding:1.5rem 1rem 0}
 footer a{color:inherit}
 </style>
@@ -101,6 +123,55 @@ const VIDEOS = {
   // "68123": "https://www.youtube.com/watch?v=XXXXXXXXXXX"
 };
 
+// Zusätzliche echte Spieldaten.
+const MATCH_STATS = {
+  /*
+  "123456": {
+    possession: [61, 39],
+    shots: [15, 7],
+    shotsOnTarget: [8, 3],
+    xg: [2.10, 0.72],
+    note: "Dortmund war über weite Strecken spielbestimmend und hatte deutlich mehr Ballbesitz."
+  }
+  */
+};
+
+// Konkrete Übertragung eines Spiels.
+const BROADCASTS = {
+  /*
+  "123456": {
+    name: "DAZN",
+    type: "Live",
+    url: "https://www.dazn.com/"
+  }
+  */
+};
+
+// Offizielle Quellen für die Regionalligen
+const REGIONAL_SOURCES = {
+  "rl-bayern": {
+    name: "BFV",
+    url: "https://www.bfv.de/spielbetrieb-verbandsleben/ligabetrieb/regionalliga-bayern",
+    video: "https://www.bfv.tv/"
+  },
+  "rl-nord": {
+    name: "NordFV Ergebnisdienst",
+    url: "https://www.nordfv.de/spielbetrieb/ergebnisdienst/"
+  },
+  "rl-nordost": {
+    name: "NOFV",
+    url: "https://nofv-online.de/"
+  },
+  "rl-west": {
+    name: "WDFV",
+    url: "https://wdfv.de/"
+  },
+  "rl-suedwest": {
+    name: "Regionalliga Südwest",
+    url: "https://www.regionalliga-suedwest.de/"
+  }
+};
+
 const SEASON = (() => { const d = new Date(); return d.getMonth() >= 6 ? d.getFullYear() : d.getFullYear() - 1; })();
 
 const state = {league: LEAGUES[0].id, view: "table", day: null};
@@ -138,10 +209,214 @@ function fmtDate(iso){
 }
 
 function videoLink(m){
-  const direct = VIDEOS[String(m.matchID)];
-  if(direct) return {url:direct, label:"Zusammenfassung ansehen", direct:true};
-  const q = encodeURIComponent(`${m.team1.teamName} ${m.team2.teamName} Highlights`);
-  return {url:`https://www.youtube.com/results?search_query=${q}`, label:"Highlights bei YouTube suchen", direct:false};
+  const direct = VIDEOS[String(m.matchID)];
+  if(direct) return {url:direct, label:"Zusammenfassung ansehen", direct:true};
+  const q = encodeURIComponent(`${m.team1.teamName} ${m.team2.teamName} Highlights`);
+  return {url:`https://www.youtube.com/results?search_query=${q}`, label:"Highlights bei YouTube suchen", direct:false};
+}
+
+function broadcastHtml(m) {
+  const matchId = String(m.matchID);
+  const direct = BROADCASTS[matchId];
+
+  if (direct) {
+    return `
+      <div class="broadcast">
+        <div class="broadcast-head">
+          📺 ${esc(direct.name)}
+          <span class="badge green">${esc(direct.type || "Live")}</span>
+        </div>
+        <small>Für dieses Spiel hinterlegte Übertragung.</small>
+        <br>
+        <a class="direct" href="${esc(direct.url)}" target="_blank" rel="noopener">Zum Anbieter →</a>
+      </div>
+    `;
+  }
+
+  const regional = REGIONAL_SOURCES[state.league];
+
+  if (regional) {
+    if (state.league === "rl-bayern") {
+      return `
+        <div class="broadcast">
+          <div class="broadcast-head">📺 Regionalliga Bayern</div>
+          <small>Offizielle Ergebnis- und Ligainformationen über den BFV. Spielberichte und Tore gibt es über BFV.TV. Das jeweilige Top-Spiel kann zusätzlich live bei BR24Sport bzw. in der ARD-Mediathek laufen.</small>
+          <div class="badges">
+            <span class="badge green">🟢 BFV</span>
+            <span class="badge">🎥 BFV.TV</span>
+            <span class="badge gold">⭐ BR24Sport / ARD-Mediathek</span>
+          </div>
+          <a href="${regional.url}" target="_blank" rel="noopener">BFV öffnen →</a>
+          <a href="${regional.video}" target="_blank" rel="noopener">BFV.TV →</a>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="broadcast">
+        <div class="broadcast-head">📺 Übertragung / Ergebnisquelle</div>
+        <small>Für dieses Spiel wurde noch kein konkreter Live-Sender hinterlegt.</small>
+        <br>
+        <a href="${regional.url}" target="_blank" rel="noopener">${esc(regional.name)} öffnen →</a>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="broadcast">
+      <div class="broadcast-head">📺 Wo kann ich das Spiel schauen?</div>
+      <small>Für dieses Spiel ist momentan keine bestätigte Übertragung hinterlegt.</small>
+    </div>
+  `;
+}
+
+function buildAnalysis(m, stats, res) {
+
+  // Wenn echte Statistikdaten vorhanden sind
+  if (stats && stats.note) {
+
+    return `
+      <div class="analysis">
+        <div class="analysis-title">
+          🧠 Kurz-Analyse
+        </div>
+
+        <p>${esc(stats.note)}</p>
+
+        ${
+          stats.possession
+          ? `
+          <div class="possession">
+
+            <div class="pos">
+              <strong>${stats.possession[0]}%</strong>
+              <div>${esc(m.team1.teamName)}</div>
+
+              <div class="bar">
+                <div
+                  class="fill"
+                  style="width:${stats.possession[0]}%">
+                </div>
+              </div>
+            </div>
+
+            <div class="pos">
+              <strong>${stats.possession[1]}%</strong>
+              <div>${esc(m.team2.teamName)}</div>
+
+              <div class="bar">
+                <div
+                  class="fill"
+                  style="width:${stats.possession[1]}%">
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <p class="muted">
+            Mehr Ballbesitz:
+            <strong>
+              ${
+                stats.possession[0] > stats.possession[1]
+                  ? esc(m.team1.teamName)
+                  : stats.possession[1] > stats.possession[0]
+                    ? esc(m.team2.teamName)
+                    : "beide Mannschaften gleich"
+              }
+            </strong>
+          </p>
+          `
+          : ""
+        }
+
+        ${
+          stats.shots || stats.shotsOnTarget || stats.xg
+          ? `
+          <div class="stat-grid">
+
+            ${
+              stats.shots
+              ? `
+              <div class="stat">
+                <b>${stats.shots[0]} : ${stats.shots[1]}</b>
+                <span>Schüsse</span>
+              </div>
+              `
+              : ""
+            }
+
+            ${
+              stats.shotsOnTarget
+              ? `
+              <div class="stat">
+                <b>${stats.shotsOnTarget[0]} : ${stats.shotsOnTarget[1]}</b>
+                <span>Schüsse aufs Tor</span>
+              </div>
+              `
+              : ""
+            }
+
+            ${
+              stats.xg
+              ? `
+              <div class="stat">
+                <b>${stats.xg[0]} : ${stats.xg[1]}</b>
+                <span>xG</span>
+              </div>
+              `
+              : ""
+            }
+
+          </div>
+          `
+          : ""
+        }
+
+      </div>
+    `;
+  }
+
+  // Keine Statistik vorhanden → nichts erfinden
+  if (!res) {
+    return `
+      <div class="analysis">
+        <div class="analysis-title">
+          🧠 Spielanalyse
+        </div>
+
+        <p>
+          Das Spiel läuft bzw. hat noch nicht begonnen.
+          Eine vollständige Analyse folgt nach dem Spiel.
+        </p>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="analysis">
+
+      <div class="analysis-title">
+        🧠 Kurz-Analyse
+      </div>
+
+      <p>
+        ${
+          res.a > res.b
+          ? `${esc(m.team1.teamName)} gewann das Spiel mit ${res.a}:${res.b}.`
+          : res.b > res.a
+            ? `${esc(m.team2.teamName)} gewann das Spiel mit ${res.b}:${res.a}.`
+            : `Das Spiel endete ${res.a}:${res.b}.`
+        }
+      </p>
+
+      <p class="muted">
+        ℹ️ Für dieses Spiel sind momentan keine zuverlässigen
+        Ballbesitz- und Schussstatistiken verfügbar.
+      </p>
+
+    </div>
+  `;
 }
 
 async function showTable(){
@@ -178,9 +453,45 @@ function matchCard(m){
   const goals = (m.goals || []).slice().sort((a, b) => a.matchMinute - b.matchMinute);
   const ht = halfTime(m);
   const v = videoLink(m);
+  const stats = MATCH_STATS[String(m.matchID)];
   const goalList = goals.length
-    ? `<ol class="goals">${goals.map(g => `<li><span class="min">${g.matchMinute ?? "?"}'</span><span class="gs">${g.scoreTeam1}:${g.scoreTeam2}</span><span>${esc(g.goalGetterName)}${g.isPenalty ? " (Elfmeter)" : ""}${g.isOwnGoal ? " (Eigentor)" : ""}</span></li>`).join("")}</ol>`
-    : `<p class="muted">${m.matchIsFinished ? "Keine Torinformationen vorhanden." : "Noch keine Tore."}</p>`;
+  ? `
+    <ol class="goals">
+
+      ${goals.map(g => `
+        <li>
+
+          <span class="goal-icon">⚽</span>
+
+          <span class="min">
+            ${g.matchMinute ?? "?"}'
+          </span>
+
+          <span class="gs">
+            ${g.scoreTeam1}:${g.scoreTeam2}
+          </span>
+
+          <span>
+            <strong>
+              ${esc(g.goalGetterName || "Torschütze unbekannt")}
+            </strong>
+
+            ${g.isPenalty ? " · Elfmeter" : ""}
+            ${g.isOwnGoal ? " · Eigentor" : ""}
+          </span>
+
+        </li>
+      `).join("")}
+
+    </ol>
+  `
+  : `
+    <p class="muted">
+      ${m.matchIsFinished
+        ? "Keine Torinformationen vorhanden."
+        : "Noch keine Tore."}
+    </p>
+  `;
   return `<details class="match ${live ? "live" : ""}">
     <summary>
       <span class="side home">${esc(m.team1.shortName || m.team1.teamName)}${logo(m.team1)}</span>
@@ -190,7 +501,9 @@ function matchCard(m){
     <div class="detail">
       <p class="meta">${esc(fmtDate(m.matchDateTime))}${m.location && m.location.locationCity ? " · " + esc(m.location.locationCity) : ""}${ht ? " · Halbzeit " + ht : ""}${m.numberOfViewers ? " · " + m.numberOfViewers.toLocaleString("de-DE") + " Zuschauer" : ""}</p>
       ${goalList}
+      ${buildAnalysis(m, stats, res)}
       ${m.matchIsFinished ? `<a class="video ${v.direct ? "direct" : ""}" href="${esc(v.url)}" target="_blank" rel="noopener">${esc(v.label)}</a>` : ""}
+      ${broadcastHtml(m)}
     </div>
   </details>`;
 }
